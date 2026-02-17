@@ -225,6 +225,8 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
+                        // DISABLED: Add Contribution action (hidden temporarily)
+                        /*
                         Expanded(
                           child: QuickActionButton(
                             icon: Icons.add_circle_outline,
@@ -237,7 +239,10 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                             },
                           ),
                         ),
+                        */
                         const SizedBox(width: 12),
+                        // DISABLED: Deposit Funds action (hidden temporarily)
+                        /*
                         Expanded(
                           child: QuickActionButton(
                             icon: Icons.account_balance_wallet,
@@ -250,6 +255,7 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                             },
                           ),
                         ),
+                        */
                         const SizedBox(width: 12),
                         Expanded(
                           child: QuickActionButton(

@@ -314,7 +314,8 @@ class _ContributionScreenState extends State<ContributionScreen> {
 
                     const SizedBox(height: 24),
 
-                    // Submit Button
+                    // DISABLED: Submit Contribution button (temporarily hidden)
+                    /*
                     SizedBox(
                       width: double.infinity,
                       height: 56,
@@ -346,6 +347,7 @@ class _ContributionScreenState extends State<ContributionScreen> {
                               ),
                       ),
                     ),
+                    */
 
                     const SizedBox(height: 16),
 

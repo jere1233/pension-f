@@ -70,6 +70,8 @@ class _DepositModalState extends State<DepositModal> {
       ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+        // DISABLED: Deposit action temporarily removed
+        /*
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
           onPressed: () async {
@@ -94,6 +96,7 @@ class _DepositModalState extends State<DepositModal> {
           },
           child: const Text('Deposit'),
         ),
+        */
       ],
     );
   }

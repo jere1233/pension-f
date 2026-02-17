@@ -62,7 +62,7 @@ class BalanceCards extends StatelessWidget {
           title: 'Total Balance',
           // Per request: show number of logins here — use completedTransactions as fallback
           amount: '${stats?.completedTransactions ?? 0}',
-          subtitle: 'Number of logins',
+          subtitle: 'total balance across all plans',
           gradient: AppColors.cardGradient1,
           icon: Icons.account_balance_wallet,
         ),

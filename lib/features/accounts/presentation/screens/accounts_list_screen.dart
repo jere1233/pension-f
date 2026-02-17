@@ -269,6 +269,8 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
           );
         },
       ),
+      // DISABLED: Add Contribution FAB (temporarily hidden)
+      /*
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           final accountProvider = context.read<AccountProvider>();
@@ -288,6 +290,7 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
         icon: const Icon(Icons.add),
         label: const Text('Add Contribution'),
       ),
+      */
     );
   }
 

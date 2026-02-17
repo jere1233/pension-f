@@ -7,6 +7,7 @@ import '../../features/authentication/presentation/screens/register_screen.dart'
 import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
 import '../../features/authentication/presentation/screens/login_otp_verification_screen.dart';
 import '../../features/authentication/presentation/screens/payment_status_screen.dart';
+import '../../features/authentication/presentation/screens/set_permanent_password_screen.dart';
 import '../../features/authentication/presentation/screens/terms_and_conditions_screen.dart';
 import '../../features/authentication/presentation/screens/change_password_screen.dart';
 import '../../features/authentication/presentation/screens/change_pin_screen.dart';
@@ -137,6 +138,15 @@ class AppRouter {
           final transactionId = state.pathParameters['transactionId']!;
           return PaymentStatusScreen(transactionId: transactionId);
         },
+      ),
+      
+      // ============================================================================
+      // SET PERMANENT PASSWORD (After Registration)
+      // ============================================================================
+      GoRoute(
+        path: RouteNames.setPermanentPassword,
+        name: RouteNames.setPermanentPassword,
+        builder: (context, state) => const SetPermanentPasswordScreen(),
       ),
       
       // ============================================================================

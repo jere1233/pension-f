@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../accounts/presentation/providers/account_provider.dart';
-import '../../../accounts/presentation/widgets/deposit_modal.dart';
+import '../../../accounts/presentation/providers/account_provider.dart' show AccountStatus;
+// import '../../../accounts/presentation/widgets/deposit_modal.dart';
 import '../../../../shared/routes/route_names.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,52 +44,27 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 title: const Text(
                   'Payments',
                   style: TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontSize: 24,
+                    color: Colors.white,
                   ),
                 ),
                 centerTitle: true,
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.primary,
-                        AppColors.primary.withOpacity(0.8),
-                      ],
-                    ),
-                  ),
-                ),
               ),
             ),
           ];
         },
         body: Consumer<AccountProvider>(
-          builder: (context, provider, child) {
-            if (provider.status == AccountStatus.loading && !provider.hasAccounts) {
+          builder: (context, provider, _) {
+            if (provider.isLoading) {
               return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(
-                      color: AppColors.primary,
-                      strokeWidth: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Loading accounts...',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
               );
             }
 
-            if (provider.status == AccountStatus.error && !provider.hasAccounts) {
+            if (provider.status == AccountStatus.error) {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
@@ -98,25 +74,24 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: AppColors.errorLight,
+                          color: Colors.red.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.error_outline_rounded,
-                          size: 48,
-                          color: AppColors.error,
+                          size: 64,
+                          color: Colors.red,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Failed to Load Accounts',
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Error Loading Accounts',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       Text(
                         provider.errorMessage ?? 'Something went wrong',
                         textAlign: TextAlign.center,
@@ -351,6 +326,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                           
                           const SizedBox(height: 20),
                           
+                          // DISABLED: Contribute & Deposit Features
+                          // These features are temporarily disabled and will be available in a future release
+                          /*
                           // Action Buttons
                           Row(
                             children: [
@@ -422,6 +400,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                               ),
                             ),
                           ),
+                          */
                         ],
                       ),
                     ),

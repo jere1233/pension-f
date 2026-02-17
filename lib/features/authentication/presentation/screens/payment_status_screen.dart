@@ -68,14 +68,14 @@ class _PaymentStatusScreenState extends State<PaymentStatusScreen> {
       _statusCheckTimer?.cancel();
       
       Fluttertoast.showToast(
-        msg: "Payment successful! Registration complete!",
+        msg: "Payment successful! Please set your permanent password.",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: AppColors.success,
         textColor: Colors.white,
       );
 
-      context.go(RouteNames.home);
+      context.go(RouteNames.setPermanentPassword);
     }
   }
 

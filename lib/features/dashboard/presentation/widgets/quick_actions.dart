@@ -35,26 +35,27 @@ class QuickActions extends StatelessWidget {
             context.push(RouteNames.downloadStatement);
           },
         ),
-        _QuickActionCard(
-          icon: Icons.savings,
-          title: 'Contribute',
-          gradient: AppColors.cardGradient3,
-          onTap: () {
-            context.push(RouteNames.payments);
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.payment,
-          title: 'Deposit',
-          gradient: AppColors.cardGradient4,
-          onTap: () {
-            // Show deposit modal
-            showDialog(
-              context: context,
-              builder: (_) => const DepositModal(),
-            );
-          },
-        ),
+        // Contribute and Deposit are temporarily disabled.
+        // _QuickActionCard(
+        //   icon: Icons.savings,
+        //   title: 'Contribute',
+        //   gradient: AppColors.cardGradient3,
+        //   onTap: () {
+        //     context.push(RouteNames.payments);
+        //   },
+        // ),
+        // _QuickActionCard(
+        //   icon: Icons.payment,
+        //   title: 'Deposit',
+        //   gradient: AppColors.cardGradient4,
+        //   onTap: () {
+        //     // Show deposit modal
+        //     showDialog(
+        //       context: context,
+        //       builder: (_) => const DepositModal(),
+        //     );
+        //   },
+        // ),
         _QuickActionCard(
           icon: Icons.history,
           title: 'History',

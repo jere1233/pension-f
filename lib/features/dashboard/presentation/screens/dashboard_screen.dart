@@ -13,6 +13,7 @@ import '../widgets/balance_cards.dart';
 import '../widgets/user_profile_card.dart';
 import '../widgets/quick_actions.dart';
 import '../widgets/transaction_history_widget.dart';
+import '../widgets/overview_contributions_widget.dart'; 
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -197,6 +198,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       
                       const SizedBox(height: 24),
                       
+                      // Overview Contributions
+                      const OverviewContributionsWidget(),
+
                       // Quick Actions
                       const Text(
                         'Quick Actions',

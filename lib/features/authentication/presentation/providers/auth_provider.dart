@@ -679,6 +679,24 @@ class AuthProvider extends ChangeNotifier {
     return success ? _termsAndConditions : null;
   }
 
+  /// Set permanent password (for users with temporary password after registration)
+  Future<bool> setPermanentPassword(String password) async {
+    try {
+      _setLoading(true);
+      _errorMessage = null;
+
+      await _authDataSource.setPassword(password: password);
+
+      _setLoading(false);
+      return true;
+    } catch (e) {
+      _setLoading(false);
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
+      notifyListeners();
+      return false;
+    }
+  }
+
   // ============================================================================
   // HELPER METHODS
   // ============================================================================

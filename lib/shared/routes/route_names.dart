@@ -10,6 +10,7 @@ class RouteNames {
   static const String otpVerification = '/otp-verification';
   static const String loginOtpVerification = '/login-otp-verification';
   static const String paymentStatus = '/payment-status';
+  static const String setPermanentPassword = '/set-permanent-password';
   static const String termsAndConditions = '/terms-and-conditions';
   
   // Password & PIN Management

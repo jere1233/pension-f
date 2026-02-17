@@ -45,11 +45,8 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   String? _country = 'Kenya';
   
   // Step 4: Financial & Pension Info
-  late TextEditingController _salaryController;
   String? _contributionRate;
-  late TextEditingController _retirementAgeController;
   String _accountType = 'MANDATORY';
-  String _riskProfile = 'MEDIUM';
   
   // Terms and Conditions acceptance
   bool _acceptedTerms = false;
@@ -80,8 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _nationalIdController = TextEditingController();
     _addressController = TextEditingController();
     _cityController = TextEditingController();
-    _salaryController = TextEditingController();
-    _retirementAgeController = TextEditingController();
+    // Salary and retirement age inputs removed; system will use defaults
     
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -108,8 +104,6 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _nationalIdController.dispose();
     _addressController.dispose();
     _cityController.dispose();
-    _salaryController.dispose();
-    _retirementAgeController.dispose();
 
     _fadeController.dispose();
     super.dispose();
@@ -214,17 +208,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
           : null,
       country: _country,
       
-      salary: _salaryController.text.isNotEmpty 
-          ? num.tryParse(_salaryController.text) 
-          : null,
-      contributionRate: _contributionRate != null 
+        // Salary and risk profile are managed by system; contributionRate is kept
+        contributionRate: _contributionRate != null 
           ? num.tryParse(_contributionRate!) 
           : null,
-      retirementAge: _retirementAgeController.text.isNotEmpty 
-          ? int.tryParse(_retirementAgeController.text) 
-          : null,
-      accountType: _accountType,
-      riskProfile: _riskProfile,
+        // Retirement age calculated by system; default to 60
+        retirementAge: 60,
+        accountType: _accountType,
       currency: 'KES',
       accountStatus: 'ACTIVE',
       kycVerified: false,
@@ -886,23 +876,8 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
           
           const SizedBox(height: 32),
           
-          NumericTextField(
-            controller: _salaryController,
-            labelText: 'Monthly Salary',
-            hintText: '50000',
-            prefixIcon: Icons.attach_money_rounded,
-            prefixText: 'KES ',
-            textInputAction: TextInputAction.next,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your monthly salary';
-              }
-              return null;
-            },
-          ),
-          
+          // Contribution Rate (kept)
           const SizedBox(height: 20),
-          
           DropdownField(
             value: _contributionRate,
             labelText: 'Contribution Rate',
@@ -918,46 +893,33 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
               return null;
             },
           ),
-          
+
           const SizedBox(height: 20),
-          
-          NumericTextField(
-            controller: _retirementAgeController,
-            labelText: 'Retirement Age',
-            hintText: '60',
-            prefixIcon: Icons.calendar_today_rounded,
-            suffixText: 'years',
-            allowDecimal: false,
-            textInputAction: TextInputAction.next,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your retirement age';
-              }
-              return null;
-            },
+
+          // Retirement ages are calculated by the system. Display defaults.
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Retirement Ages',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(height: 8),
+                Text('retirement age: 60 years', style: TextStyle(fontSize: 13)),
+                SizedBox(height: 4),
+                Text('Early retirement age: 55 years', style: TextStyle(fontSize: 13)),
+              ],
+            ),
           ),
-          
+
           const SizedBox(height: 20),
-          
-          DropdownField(
-            value: _accountType,
-            labelText: 'Account Type',
-            hintText: 'Select account type',
-            prefixIcon: Icons.account_balance_wallet_outlined,
-            items: const ['MANDATORY', 'VOLUNTARY', 'INDIVIDUAL'],
-            onChanged: (value) => setState(() => _accountType = value!),
-          ),
-          
-          const SizedBox(height: 20),
-          
-          DropdownField(
-            value: _riskProfile,
-            labelText: 'Risk Profile',
-            hintText: 'Select risk profile',
-            prefixIcon: Icons.trending_up_rounded,
-            items: const ['LOW', 'MEDIUM', 'HIGH'],
-            onChanged: (value) => setState(() => _riskProfile = value!),
-          ),
           
           const SizedBox(height: 32),
           
