@@ -236,6 +236,16 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 12),
+                                  const Text(
+                                    'AutoNest ID',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
                                   Text(
                                     account.accountNumber,
                                     style: const TextStyle(

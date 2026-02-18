@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../accounts/presentation/providers/account_provider.dart';
 import '../../../accounts/domain/entities/account.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../domain/entities/dashboard_stats.dart';
 
 class OverviewContributionsWidget extends StatefulWidget {
   const OverviewContributionsWidget({super.key});

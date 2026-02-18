@@ -57,12 +57,13 @@ class BalanceCards extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       childAspectRatio: 1.3,
+      // Note: 4th card (Account Details / Bank Details) is now commented out to reduce clutter
       children: [
         _BalanceCard(
-          title: 'Total Balance',
+          title: 'Total Logins',
           // Per request: show number of logins here — use completedTransactions as fallback
           amount: '${stats?.completedTransactions ?? 0}',
-          subtitle: 'total balance across all plans',
+          subtitle: 'Includes subscription fees from registration',
           gradient: AppColors.cardGradient1,
           icon: Icons.account_balance_wallet,
         ),
@@ -71,7 +72,7 @@ class BalanceCards extends StatelessWidget {
           // Per request: show current pension account balance
           amount: 'KES ${_formatAmount(balance)}',
           subtitle: account != null
-              ? 'Account: ${account.accountNumber}'
+              ? 'AutoNest ID: ${account.accountNumber}'
               : 'Across all plans',
           gradient: AppColors.cardGradient2,
           icon: Icons.arrow_downward,
@@ -86,14 +87,15 @@ class BalanceCards extends StatelessWidget {
           gradient: AppColors.cardGradient3,
           icon: Icons.trending_up,
         ),
-        _BalanceCard(
-          title: 'Account Details',
-          // Show pension account details as requested
-          amount: account != null ? account.accountNumber : 'No account',
-          subtitle: account != null ? 'Type: ${account.accountType}' : 'No account available',
-          gradient: AppColors.cardGradient4,
-          icon: Icons.access_time,
-        ),
+        // Bank details card temporarily removed to reduce dashboard clutter
+        // _BalanceCard(
+        //   title: 'Account Details',
+        //   // Show pension account details as requested
+        //   amount: account != null ? account.accountNumber : 'No account',
+        //   subtitle: account != null ? 'Type: ${account.accountType}' : 'No account available',
+        //   gradient: AppColors.cardGradient4,
+        //   icon: Icons.access_time,
+        // ),
       ],
     );
   }
