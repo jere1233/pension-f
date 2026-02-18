@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/routes/route_names.dart';
 import '../widgets/custom_button.dart';
 import '../providers/auth_provider.dart';
+import  '../../domain/entities/user.dart';
 
 class PaymentStatusScreen extends StatefulWidget {
   final String transactionId;
@@ -68,14 +69,16 @@ class _PaymentStatusScreenState extends State<PaymentStatusScreen> {
       _statusCheckTimer?.cancel();
       
       Fluttertoast.showToast(
-        msg: "Payment successful! Please set your permanent password.",
+        msg: "Payment successful! A temporary password was sent to your email/phone. Please login using it — you'll be prompted to set a permanent password.",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: AppColors.success,
         textColor: Colors.white,
       );
 
-      context.go(RouteNames.setPermanentPassword);
+      // Direct the user to Login — they should sign in with the temporary
+      // password they received, verify the OTP, and then set a permanent password.
+      context.go(RouteNames.login);
     }
   }
 
