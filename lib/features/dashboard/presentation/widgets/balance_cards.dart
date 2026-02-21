@@ -60,10 +60,10 @@ class BalanceCards extends StatelessWidget {
       // Note: 4th card (Account Details / Bank Details) is now commented out to reduce clutter
       children: [
         _BalanceCard(
-          title: 'Total Logins',
+          title: 'Total balance',
           // Per request: show number of logins here — use completedTransactions as fallback
           amount: '${stats?.completedTransactions ?? 0}',
-          subtitle: 'Includes subscription fees from registration',
+          subtitle: 'Subscription fee',
           gradient: AppColors.cardGradient1,
           icon: Icons.account_balance_wallet,
         ),

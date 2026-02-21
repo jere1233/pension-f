@@ -26,6 +26,7 @@ class TransactionModel extends TransactionDetail {
     super.senderAccount,
     super.balanceAfter,
     super.notes,
+    super.contributionPercentage,
   });
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
@@ -66,6 +67,9 @@ class TransactionModel extends TransactionDetail {
           ? (json['balanceAfter'] as num).toDouble()
           : null,
       notes: json['notes'],
+      contributionPercentage: json['contributionPercentage'] != null
+          ? (json['contributionPercentage'] as num).toDouble()
+          : null,
     );
   }
 
@@ -95,6 +99,7 @@ class TransactionModel extends TransactionDetail {
       'senderAccount': senderAccount,
       'balanceAfter': balanceAfter,
       'notes': notes,
+      'contributionPercentage': contributionPercentage,
     };
   }
 
@@ -124,6 +129,7 @@ class TransactionModel extends TransactionDetail {
       senderAccount: senderAccount,
       balanceAfter: balanceAfter,
       notes: notes,
+      contributionPercentage: contributionPercentage,
     );
   }
 
@@ -153,6 +159,7 @@ class TransactionModel extends TransactionDetail {
       senderAccount: entity.senderAccount,
       balanceAfter: entity.balanceAfter,
       notes: entity.notes,
+      contributionPercentage: entity.contributionPercentage,
     );
   }
 }

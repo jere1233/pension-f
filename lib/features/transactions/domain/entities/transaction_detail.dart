@@ -31,6 +31,7 @@ class TransactionDetail extends Equatable {
   final String? senderAccount;
   final double? balanceAfter;
   final String? notes;
+  final double? contributionPercentage;
 
   const TransactionDetail({
     required this.id,
@@ -57,6 +58,7 @@ class TransactionDetail extends Equatable {
     this.senderAccount,
     this.balanceAfter,
     this.notes,
+    this.contributionPercentage,
   });
 
   // Computed properties
