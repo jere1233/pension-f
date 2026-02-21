@@ -62,7 +62,6 @@ class BalanceCards extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       childAspectRatio: 1.3,
-      // Note: 4th card (Account Details / Bank Details) is now commented out to reduce clutter
       children: [
         _BalanceCard(
           title: 'Total balance',
@@ -81,6 +80,14 @@ class BalanceCards extends StatelessWidget {
               : 'No earnings yet',
           gradient: AppColors.cardGradient2,
           icon: Icons.trending_up,
+        ),
+        _BalanceCard(
+          title: 'Projected @ 60',
+          // Per request: Show KES 100 daily savings projection at retirement (age 60)
+          amount: 'KES ${_formatAmount(projectedAt65.toDouble())}',
+          subtitle: 'KES 100 daily savings',
+          gradient: AppColors.cardGradient3,
+          icon: Icons.savings,
         ),
         // Total Contributions card and Bank details card temporarily removed to reduce dashboard clutter
         // _BalanceCard(
