@@ -385,7 +385,7 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
 
   Widget _buildMainCard() {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
@@ -412,16 +412,16 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
           LayoutBuilder(
             builder: (context, constraints) {
               final availableWidth = constraints.maxWidth;
-              final spacing = 8.0; 
-              final totalSpacing = spacing * 5; 
+              final spacing = 6.0;
+              final totalSpacing = spacing * 5;
               final boxWidth = (availableWidth - totalSpacing) / 6;
-              final boxSize = boxWidth.clamp(45.0, 55.0); 
+              final boxSize = boxWidth.clamp(40.0, 50.0);
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(6, (index) {
                   return SizedBox(
                     width: boxSize,
-                    height: 60,
+                    height: 50,
                     child: TextFormField(
                       controller: _otpControllers[index],
                       focusNode: _focusNodes[index],
@@ -429,7 +429,7 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
                       textAlign: TextAlign.center,
                       maxLength: 1,
                       style: TextStyle(
-                        fontSize: boxSize > 50 ? 24 : 20, 
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1a1a1a),
                       ),
@@ -441,12 +441,12 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
                         filled: true,
                         fillColor: const Color(0xFFFDF6F0),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: const Color(0xFFE8D5C4), width: 1.5),
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: const Color(0xFFE8D5C4), width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -471,7 +471,7 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
             },
           ), 
           if (_showPasswordField) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: 18),
             PasswordTextField(
               controller: _newPasswordController,
               labelText: 'New Password',
@@ -489,7 +489,7 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
             ),
           ],
           
-          const SizedBox(height: 32),
+          const SizedBox(height: 20),
           
           Consumer<AuthProvider>(
             builder: (context, authProvider, _) {

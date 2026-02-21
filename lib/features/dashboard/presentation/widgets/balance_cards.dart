@@ -25,15 +25,20 @@ class BalanceCards extends StatelessWidget {
   }
 
   int _calculateYearsToRetirement() {
-    // Calculate based on user's date of birth and retirement age (65)
+    // Calculate based on user's date of birth and retirement age (60)
     // This would need dateOfBirth in User entity
     return 35; 
   }
 
   int _calculateProjectedRetirement(double currentBalance) {
     final years = _calculateYearsToRetirement();
-    // Simple 8% annual growth calculation
-    return (currentBalance * (1 + 0.08 * years)).toInt();
+    // KES 100 daily savings × 365 days per year × years to retirement
+    // Plus current balance with 8% annual growth
+    final dailySavings = 100.0;
+    final daysPerYear = 365;
+    final projectedSavings = dailySavings * daysPerYear * years;
+    final growthOnBalance = currentBalance * (1 + 0.08 * years);
+    return (growthOnBalance + projectedSavings).toInt();
   }
 
   @override
@@ -68,26 +73,16 @@ class BalanceCards extends StatelessWidget {
           icon: Icons.account_balance_wallet,
         ),
         _BalanceCard(
-          title: 'Total Contributions',
-          // Per request: show current pension account balance
-          amount: 'KES ${_formatAmount(balance)}',
-          subtitle: account != null
-              ? 'AutoNest ID: ${account.accountNumber}'
-              : 'Across all plans',
-          gradient: AppColors.cardGradient2,
-          icon: Icons.arrow_downward,
-        ),
-        _BalanceCard(
           title: 'Total Earnings',
           // Per request: show interest accrued
           amount: 'KES ${_formatAmount(account?.interestEarned ?? 0)}',
           subtitle: account != null
               ? 'Interest: ${_formatAmount(account.interestEarned)}\nReturns: ${_formatAmount(account.investmentReturns)}'
               : 'No earnings yet',
-          gradient: AppColors.cardGradient3,
+          gradient: AppColors.cardGradient2,
           icon: Icons.trending_up,
         ),
-        // Bank details card temporarily removed to reduce dashboard clutter
+        // Total Contributions card and Bank details card temporarily removed to reduce dashboard clutter
         // _BalanceCard(
         //   title: 'Account Details',
         //   // Show pension account details as requested
