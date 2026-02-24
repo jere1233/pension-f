@@ -1,7 +1,7 @@
 // lib/core/constants/api_constants.dart - DASHBOARD SECTION
 
 class ApiConstants {
-  static const String baseUrl = 'https://pension-backend-rs4h.onrender.com';
+  static const String baseUrl = 'https://autonest-backend.onrender.com';
   
   // Timeouts
   static const int connectionTimeout = 30000; 
@@ -54,7 +54,7 @@ class ApiConstants {
   // ============================================================================
   static const String dashboardUser = '/api/dashboard/user';
   static const String dashboardTransactions = '/api/dashboard/transactions';
-  static const String dashboardStats = '/api/dashboard/stats';  // ✅ CORRECT with /api prefix
+  static const String dashboardStats = '/api/dashboard/stats';  
   
   // ============================================================================
   // USER ENDPOINTS
