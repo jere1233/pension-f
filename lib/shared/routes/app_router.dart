@@ -16,7 +16,7 @@ import '../../features/authentication/presentation/screens/set_pin_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/screens/transaction_detail_screen.dart';
-import '../../features/transfer/presentation/screens/transfer_screen.dart';
+import '../../features/calculator/presentation/screens/calculator_screen.dart';
 import '../../features/payments/presentation/screens/payments_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
@@ -123,7 +123,6 @@ class AppRouter {
         path: RouteNames.otpVerification,
         name: RouteNames.otpVerification,
         redirect: (context, state) {
-          // Redirect to the new unified OTP screen
           return RouteNames.loginOtpVerification;
         },
       ),
@@ -244,12 +243,12 @@ class AppRouter {
       ),
       
       // ============================================================================
-      // TRANSFER & PAYMENT ROUTES
+      // CALCULATOR ROUTE (replaces Transfer)
       // ============================================================================
       GoRoute(
-        path: RouteNames.transfer,
-        name: RouteNames.transfer,
-        builder: (context, state) => const TransferScreen(),
+        path: RouteNames.calculator,
+        name: RouteNames.calculator,
+        builder: (context, state) => const CalculatorScreen(),
       ),
       GoRoute(
         path: RouteNames.payments,

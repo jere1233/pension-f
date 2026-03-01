@@ -24,7 +24,7 @@ class RouteNames {
   static const String home = '/home';
   static const String transactions = '/transactions';
   static const String transactionDetail = '/transaction-detail';
-  static const String transfer = '/transfer';
+  static const String calculator = '/calculator';
   static const String payments = '/payments';
   static const String profile = '/profile';
   static const String notifications = '/notifications';
@@ -40,7 +40,7 @@ class RouteNames {
   static const String portfolio = '/portfolio';
   
   // ============================================================================
-  // 🆕 REPORTS ROUTES (NEW)
+  // REPORTS ROUTES
   // ============================================================================
   static const String reports = '/reports';
   static const String reportDetail = '/report-detail';

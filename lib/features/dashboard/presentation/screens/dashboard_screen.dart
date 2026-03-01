@@ -1,4 +1,4 @@
-// lib/features/dashboard/presentation/screens/dashboard_screen.dart - UPDATED
+// lib/features/dashboard/presentation/screens/dashboard_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,19 +32,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  // 🆕 Load all dashboard data including accounts
   Future<void> _loadData() async {
     try {
       final dashboardProvider = context.read<DashboardProvider>();
       final accountProvider = context.read<AccountProvider>();
       
-      // Load dashboard and account data in parallel
       await Future.wait([
         dashboardProvider.loadDashboardData(),
         accountProvider.fetchAccounts(),
       ]);
     } catch (e) {
-      // Provider might not be available yet
       debugPrint('Error loading dashboard data: $e');
     }
   }
@@ -56,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    final accountProvider = context.watch<AccountProvider>(); // 🆕 NEW
+    final accountProvider = context.watch<AccountProvider>();
 
     DashboardProvider? dashboardProvider;
     try {
@@ -65,7 +62,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       dashboardProvider = null;
     }
 
-    // Use dashboard user data if available, fallback to auth user
     final user = dashboardProvider?.user ?? authProvider.user;
     final stats = dashboardProvider?.stats;
     final transactions = dashboardProvider?.recentTransactions ?? [];
@@ -77,7 +73,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           onRefresh: _onRefresh,
           child: CustomScrollView(
             slivers: [
-              // App Bar
+              // ── App Bar ──
               SliverAppBar(
                 floating: true,
                 snap: true,
@@ -121,28 +117,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                    onPressed: () {
-                      context.push(RouteNames.notifications);
-                    },
+                    onPressed: () => context.push(RouteNames.notifications),
                   ),
                   const LogoutButton(isIconButton: true),
                   const SizedBox(width: 8),
                 ],
               ),
 
-              // Content
+              // ── Content ──
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // User Profile Card
                       UserProfileCard(user: user),
                       
                       const SizedBox(height: 24),
                       
-                      // Balance Cards
+                      // Account Overview header
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -154,7 +147,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          // 🆕 Show account type badge if available
                           if (accountProvider.defaultAccount != null)
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -182,7 +174,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       
                       const SizedBox(height: 16),
                       
-                      // 🆕 Show loading state for accounts
                       (dashboardProvider?.isLoadingStats == true || accountProvider.isLoading)
                           ? const Center(
                               child: Padding(
@@ -190,14 +181,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child: CircularProgressIndicator(),
                               ),
                             )
-                          : BalanceCards(
-                              stats: stats,
-                              user: user,
-                            ),
+                          : BalanceCards(stats: stats, user: user),
                       
                       const SizedBox(height: 24),
 
-                      // Quick Actions
                       const Text(
                         'Quick Actions',
                         style: TextStyle(
@@ -213,13 +200,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       
                       const SizedBox(height: 24),
                       
-                      // Recent Transactions
                       TransactionHistoryWidget(
                         transactions: transactions,
                         isLoading: dashboardProvider?.isLoadingTransactions ?? false,
-                        onSeeAll: () {
-                          context.push(RouteNames.transactions);
-                        },
+                        onSeeAll: () => context.push(RouteNames.transactions),
                       ),
                       
                       const SizedBox(height: 24),
@@ -257,9 +241,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 icon: Icons.home_rounded,
                 label: 'Home',
                 isSelected: _selectedIndex == 0,
-                onTap: () {
-                  setState(() => _selectedIndex = 0);
-                },
+                onTap: () => setState(() => _selectedIndex = 0),
               ),
               _NavBarItem(
                 icon: Icons.receipt_long_rounded,
@@ -271,12 +253,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
               _NavBarItem(
-                icon: Icons.swap_horiz_rounded,
-                label: 'Transfer',
+                icon: Icons.calculate_rounded,
+                label: 'Calculator',
                 isSelected: _selectedIndex == 2,
                 onTap: () {
                   setState(() => _selectedIndex = 2);
-                  context.push(RouteNames.transfer);
+                  context.push(RouteNames.calculator);
                 },
               ),
               _NavBarItem(
@@ -325,11 +307,7 @@ class _NavBarItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            Icon(icon, color: color, size: 24),
             const SizedBox(height: 4),
             Text(
               label,

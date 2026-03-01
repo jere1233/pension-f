@@ -1,10 +1,10 @@
-// lib/features/dashboard/presentation/widgets/balance_cards.dart - UPDATED
+// lib/features/dashboard/presentation/widgets/balance_cards.dart - FIXED LAYOUT
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../authentication/domain/entities/user.dart';
-import '../../../accounts/presentation/providers/account_provider.dart'; 
-import '../../../accounts/domain/entities/account.dart'; 
+import '../../../accounts/presentation/providers/account_provider.dart';
+import '../../../accounts/domain/entities/account.dart';
 import '../../domain/entities/dashboard_stats.dart';
 import '../../../../core/constants/app_colors.dart';
 
@@ -20,86 +20,20 @@ class BalanceCards extends StatelessWidget {
 
   int _calculateMonthlyContribution(Account? account) {
     if (account == null) return 0;
-    // Calculate based on employee + employer contributions
     return (account.employeeContributions + account.employerContributions).toInt();
   }
 
   int _calculateYearsToRetirement() {
-    // Calculate based on user's date of birth and retirement age (60)
-    // This would need dateOfBirth in User entity
-    return 35; 
+    return 35;
   }
 
   int _calculateProjectedRetirement(double currentBalance) {
     final years = _calculateYearsToRetirement();
-    // KES 100 daily savings × 365 days per year × years to retirement
-    // Plus current balance with 8% annual growth
-    final dailySavings = 100.0;
-    final daysPerYear = 365;
+    const dailySavings = 100.0;
+    const daysPerYear = 365;
     final projectedSavings = dailySavings * daysPerYear * years;
     final growthOnBalance = currentBalance * (1 + 0.08 * years);
     return (growthOnBalance + projectedSavings).toInt();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // 🆕 Get account data from AccountProvider
-    final accountProvider = context.watch<AccountProvider>();
-    final account = accountProvider.defaultAccount;
-
-    // Use real account data if available, fallback to stats
-    final balance = account?.currentBalance ?? stats?.balance ?? 0;
-    final monthlyContrib = account != null
-      ? _calculateMonthlyContribution(account)
-      : (stats?.totalContributions ?? 0).toInt();
-    final yearsToRetirement = _calculateYearsToRetirement();
-    final projectedAt65 = _calculateProjectedRetirement(balance);
-
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 1.3,
-      children: [
-        _BalanceCard(
-          title: 'Total balance',
-          // Per request: show number of logins here — use completedTransactions as fallback
-          amount: '${stats?.completedTransactions ?? 0}',
-          subtitle: 'Subscription fee',
-          gradient: AppColors.cardGradient1,
-          icon: Icons.account_balance_wallet,
-        ),
-        _BalanceCard(
-          title: 'Total Earnings',
-          // Per request: show interest accrued
-          amount: 'KES ${_formatAmount(account?.interestEarned ?? 0)}',
-          subtitle: account != null
-              ? 'Interest: ${_formatAmount(account.interestEarned)}\nReturns: ${_formatAmount(account.investmentReturns)}'
-              : 'No earnings yet',
-          gradient: AppColors.cardGradient2,
-          icon: Icons.trending_up,
-        ),
-        _BalanceCard(
-          title: 'Projected @ 60',
-          // Per request: Show KES 100 daily savings projection at retirement (age 60)
-          amount: 'KES ${_formatAmount(projectedAt65.toDouble())}',
-          subtitle: 'KES 100 daily savings',
-          gradient: AppColors.cardGradient3,
-          icon: Icons.savings,
-        ),
-        // Total Contributions card and Bank details card temporarily removed to reduce dashboard clutter
-        // _BalanceCard(
-        //   title: 'Account Details',
-        //   // Show pension account details as requested
-        //   amount: account != null ? account.accountNumber : 'No account',
-        //   subtitle: account != null ? 'Type: ${account.accountType}' : 'No account available',
-        //   gradient: AppColors.cardGradient4,
-        //   icon: Icons.access_time,
-        // ),
-      ],
-    );
   }
 
   String _formatAmount(double amount) {
@@ -109,6 +43,63 @@ class BalanceCards extends StatelessWidget {
       return '${(amount / 1000).toStringAsFixed(1)}K';
     }
     return amount.toStringAsFixed(0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accountProvider = context.watch<AccountProvider>();
+    final account = accountProvider.defaultAccount;
+
+    final balance = account?.currentBalance ?? stats?.balance ?? 0;
+    final projectedAt60 = _calculateProjectedRetirement(balance);
+
+    final cards = [
+      _BalanceCard(
+        title: 'Total Balance',
+        amount: '${stats?.completedTransactions ?? 0}',
+        subtitle: 'Subscription fee',
+        gradient: AppColors.cardGradient1,
+        icon: Icons.account_balance_wallet,
+      ),
+      _BalanceCard(
+        title: 'Total Earnings',
+        amount: 'KES ${_formatAmount(account?.interestEarned ?? 0)}',
+        subtitle: account != null
+            ? 'Interest: ${_formatAmount(account.interestEarned)}\nReturns: ${_formatAmount(account.investmentReturns)}'
+            : 'No earnings yet',
+        gradient: AppColors.cardGradient2,
+        icon: Icons.trending_up,
+      ),
+      _BalanceCard(
+        title: 'Projected @ 60',
+        amount: 'KES ${_formatAmount(projectedAt60.toDouble())}',
+        subtitle: 'KES 100 daily savings',
+        gradient: AppColors.cardGradient3,
+        icon: Icons.savings,
+      ),
+    ];
+
+    return Column(
+      children: [
+        // Row 1: first 2 cards side by side — IntrinsicHeight ensures equal height
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: cards[0]),
+              const SizedBox(width: 12),
+              Expanded(child: cards[1]),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Row 2: last card spans full width
+        SizedBox(
+          width: double.infinity,
+          child: cards[2],
+        ),
+      ],
+    );
   }
 }
 
@@ -144,6 +135,9 @@ class _BalanceCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // Use mainAxisSize.min so the card doesn't over-expand vertically
+        // but will still stretch to match its sibling via IntrinsicHeight
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,7 +161,7 @@ class _BalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Text(
             amount,
             style: const TextStyle(

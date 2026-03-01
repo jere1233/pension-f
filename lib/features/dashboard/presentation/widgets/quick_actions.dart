@@ -1,16 +1,16 @@
-// lib/features/dashboard/presentation/widgets/quick_actions.dart - UPDATED WITH REPORTS
+// lib/features/dashboard/presentation/widgets/quick_actions.dart
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/routes/route_names.dart';
-import '../../../accounts/presentation/widgets/deposit_modal.dart';
 
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 6 cards in a 3-column grid = 2 perfect rows, zero empty cells
     return GridView.count(
       crossAxisCount: 3,
       crossAxisSpacing: 12,
@@ -35,27 +35,6 @@ class QuickActions extends StatelessWidget {
             context.push(RouteNames.downloadStatement);
           },
         ),
-        // Contribute and Deposit are temporarily disabled.
-        // _QuickActionCard(
-        //   icon: Icons.savings,
-        //   title: 'Contribute',
-        //   gradient: AppColors.cardGradient3,
-        //   onTap: () {
-        //     context.push(RouteNames.payments);
-        //   },
-        // ),
-        // _QuickActionCard(
-        //   icon: Icons.payment,
-        //   title: 'Deposit',
-        //   gradient: AppColors.cardGradient4,
-        //   onTap: () {
-        //     // Show deposit modal
-        //     showDialog(
-        //       context: context,
-        //       builder: (_) => const DepositModal(),
-        //     );
-        //   },
-        // ),
         _QuickActionCard(
           icon: Icons.history,
           title: 'History',
@@ -72,13 +51,21 @@ class QuickActions extends StatelessWidget {
             context.push(RouteNames.retirementGoals);
           },
         ),
-        // 🆕 NEW: Reports button
         _QuickActionCard(
           icon: Icons.description,
           title: 'Reports',
           gradient: AppColors.cardGradient3,
           onTap: () {
             context.push(RouteNames.reports);
+          },
+        ),
+        // NEW: Remove Plan card fills the empty 6th cell
+        _QuickActionCard(
+          icon: Icons.remove_circle_outline_rounded,
+          title: 'Remove Plan',
+          gradient: AppColors.cardGradient4,
+          onTap: () {
+            context.push(RouteNames.pensionPlans);
           },
         ),
       ],
