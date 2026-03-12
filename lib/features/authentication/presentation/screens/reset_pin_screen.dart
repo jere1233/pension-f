@@ -72,8 +72,13 @@ class _ResetPinScreenState extends State<ResetPinScreen> {
           backgroundColor: AppColors.success,
         );
       } else {
+        String err = (response['message'] ?? '').toLowerCase();
+        String msg = response['message'] ?? 'Failed to send OTP';
+        if (err.contains('expired')) {
+          msg = '⏰ Previous code expired – new one sent';
+        }
         Fluttertoast.showToast(
-          msg: response['message'] ?? 'Failed to send OTP',
+          msg: msg,
           backgroundColor: AppColors.error,
         );
       }
@@ -120,8 +125,13 @@ class _ResetPinScreenState extends State<ResetPinScreen> {
         );
         if (mounted) context.go('/login');
       } else {
+        String err = (response['message'] ?? '').toLowerCase();
+        String msg = response['message'] ?? 'Failed to reset PIN';
+        if (err.contains('expired') || err.contains('invalid')) {
+          msg = '❌ Invalid or expired code. Please request a new OTP.';
+        }
         Fluttertoast.showToast(
-          msg: response['message'] ?? 'Failed to reset PIN',
+          msg: msg,
           backgroundColor: AppColors.error,
         );
       }
@@ -334,7 +344,12 @@ class _ResetPinScreenState extends State<ResetPinScreen> {
                   ),
                 ),
               ),
-              
+              const SizedBox(height: 8),
+              const Text(
+                'Code expires in 10 minutes',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 24),
               
               // New PIN

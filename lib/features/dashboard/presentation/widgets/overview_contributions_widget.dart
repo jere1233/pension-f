@@ -30,9 +30,6 @@ class _OverviewContributionsWidgetState extends State<OverviewContributionsWidge
   @override
   Widget build(BuildContext context) {
     final accounts = context.watch<AccountProvider>().accounts;
-    final now = DateTime.now();
-    final weekAgo = now.subtract(const Duration(days: 7));
-    final yearStart = DateTime(now.year, 1, 1);
 
     double weekTotal = 0;
     double ytdTotal = 0;
@@ -42,15 +39,11 @@ class _OverviewContributionsWidgetState extends State<OverviewContributionsWidge
     for (final acc in accounts) {
       // Only count contributions for active accounts
       if (!acc.isActive) continue;
-      // Weekly
-      if (acc.lastContributionAt != null && acc.lastContributionAt!.isAfter(weekAgo)) {
-        weekTotal += acc.totalContributions;
-      }
-      // YTD
-      if (acc.lastContributionAt != null && acc.lastContributionAt!.isAfter(yearStart)) {
-        ytdTotal += acc.totalContributions;
-      }
-      totalInterest += acc.interestEarned;
+      
+      // Use transaction-based calculations with fallback to pre-calculated fields
+      weekTotal += acc.getWeekContributions();
+      ytdTotal += acc.getYtdContributions();
+      totalInterest += acc.getTotalInterestEarned();
       totalContributions += acc.totalContributions;
     }
 

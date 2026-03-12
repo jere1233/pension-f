@@ -28,9 +28,18 @@ class AccountModel extends Account {
     super.lastWithdrawalAt,
     required super.createdAt,
     required super.updatedAt,
+    super.transactions = const [],
   });
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
+    // Parse transactions if available (backend returns array inside account)
+    List<AccountTransaction> transactions = [];
+    if (json['transactions'] is List) {
+      transactions = (json['transactions'] as List)
+          .map((tx) => AccountTransaction.fromJson(tx as Map<String, dynamic>))
+          .toList();
+    }
+
     return AccountModel(
       id: json['id'] is String ? int.parse(json['id']) : (json['id'] ?? 0),
       accountNumber: json['accountNumber']?.toString() ?? json['account_number']?.toString() ?? '',
@@ -56,6 +65,7 @@ class AccountModel extends Account {
       lastWithdrawalAt: _parseDateTime(json['lastWithdrawalAt'] ?? json['last_withdrawal_at']),
       createdAt: _parseDateTime(json['createdAt'] ?? json['created_at']) ?? DateTime.now(),
       updatedAt: _parseDateTime(json['updatedAt'] ?? json['updated_at']) ?? DateTime.now(),
+      transactions: transactions,
     );
   }
 
@@ -128,6 +138,7 @@ class AccountModel extends Account {
         lastWithdrawalAt: lastWithdrawalAt,
         createdAt: createdAt,
         updatedAt: updatedAt,
+        transactions: transactions,
       );
 
   factory AccountModel.fromEntity(Account account) => AccountModel(
@@ -155,5 +166,6 @@ class AccountModel extends Account {
         lastWithdrawalAt: account.lastWithdrawalAt,
         createdAt: account.createdAt,
         updatedAt: account.updatedAt,
+        transactions: account.transactions,
       );
 }

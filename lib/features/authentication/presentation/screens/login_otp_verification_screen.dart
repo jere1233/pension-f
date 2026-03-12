@@ -41,12 +41,17 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
   void initState() {
     super.initState();
     _startResendTimer();
-    
+
+    // auto-focus the first OTP box when screen appears
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNodes[0].requestFocus();
+    });
+
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
     );
-    
+
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -115,8 +120,19 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
       
       _startResendTimer();
     } else if (mounted) {
+      final err = (authProvider.errorMessage ?? '').toLowerCase();
+      String message = authProvider.errorMessage ?? "Failed to resend OTP";
+
+      if (err.contains('not found') || err.contains('invalid identifier')) {
+        message = '❌ User not found. Please check your identifier.';
+      } else if (err.contains('expired')) {
+        message = '⏰ Previous OTP expired. A new one has been sent.';
+      } else if (err.contains('no otp') || err.contains('not found')) {
+        message = '⚠️ No OTP found. Please log in again to get an OTP.';
+      }
+
       Fluttertoast.showToast(
-        msg: authProvider.errorMessage ?? "Failed to resend OTP",
+        msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: AppColors.errorLight,
@@ -178,7 +194,34 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
           textColor: Colors.white,
         );
       } else {
-        _showErrorDialog(authProvider.errorMessage ?? 'Invalid OTP');
+        final err = (authProvider.errorMessage ?? '').toLowerCase();
+        if (err.contains('expired')) {
+          Fluttertoast.showToast(
+            msg: "⏰ OTP has expired. Please request a new one.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: AppColors.errorLight,
+            textColor: Colors.white,
+          );
+        } else if (err.contains('invalid')) {
+          Fluttertoast.showToast(
+            msg: "❌ Invalid OTP. Please check and try again.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: AppColors.errorLight,
+            textColor: Colors.white,
+          );
+        } else if (err.contains('too many')) {
+          Fluttertoast.showToast(
+            msg: "🔒 Too many failed attempts. Please try login again.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: AppColors.errorLight,
+            textColor: Colors.white,
+          );
+        } else {
+          _showErrorDialog(authProvider.errorMessage ?? 'Invalid OTP');
+        }
       }
     }
   }
@@ -469,6 +512,12 @@ class _LoginOtpVerificationScreenState extends State<LoginOtpVerificationScreen>
                 }),
               );
             },
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Code expires in 10 minutes',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+            textAlign: TextAlign.center,
           ), 
           if (_showPasswordField) ...[
             const SizedBox(height: 18),

@@ -50,22 +50,37 @@ class BalanceCards extends StatelessWidget {
     final accountProvider = context.watch<AccountProvider>();
     final account = accountProvider.defaultAccount;
 
-    final balance = account?.currentBalance ?? stats?.balance ?? 0;
-    final projectedAt60 = _calculateProjectedRetirement(balance);
+    // Calculate totals from all active accounts
+    double totalBalance = 0;
+    double totalAvailableBalance = 0;
+    double totalLockedBalance = 0;
+    double totalInterest = 0;
+
+    for (final acc in accountProvider.accounts) {
+      if (!acc.isActive) continue;
+      totalBalance += acc.currentBalance;
+      totalAvailableBalance += acc.availableBalance;
+      totalLockedBalance += acc.lockedBalance;
+      totalInterest += acc.getTotalInterestEarned();
+    }
+
+    final projectedAt60 = _calculateProjectedRetirement(totalBalance);
 
     final cards = [
       _BalanceCard(
         title: 'Total Balance',
-        amount: '${stats?.completedTransactions ?? 0}',
-        subtitle: 'Subscription fee',
+        amount: 'KES ${_formatAmount(totalBalance)}',
+        subtitle: totalBalance > 0
+            ? 'Available: KES ${_formatAmount(totalAvailableBalance)}\nLocked: KES ${_formatAmount(totalLockedBalance)}'
+            : 'No balance',
         gradient: AppColors.cardGradient1,
         icon: Icons.account_balance_wallet,
       ),
       _BalanceCard(
-        title: 'Total Earnings',
-        amount: 'KES ${_formatAmount(account?.interestEarned ?? 0)}',
+        title: 'Total Interest Earned',
+        amount: 'KES ${_formatAmount(totalInterest)}',
         subtitle: account != null
-            ? 'Interest: ${_formatAmount(account.interestEarned)}\nReturns: ${_formatAmount(account.investmentReturns)}'
+            ? 'Returns: ${_formatAmount(account.investmentReturns)}\nDividends: ${_formatAmount(account.dividendsEarned)}'
             : 'No earnings yet',
         gradient: AppColors.cardGradient2,
         icon: Icons.trending_up,
@@ -73,7 +88,7 @@ class BalanceCards extends StatelessWidget {
       _BalanceCard(
         title: 'Projected @ 60',
         amount: 'KES ${_formatAmount(projectedAt60.toDouble())}',
-        subtitle: 'KES 100 daily savings',
+        subtitle: 'Based on current balance',
         gradient: AppColors.cardGradient3,
         icon: Icons.savings,
       ),
