@@ -38,6 +38,7 @@ class ApiConstants {
   
   // Admin
   static const String promote = '/api/auth/makeadmin';
+  // demote endpoint requires user id in path (e.g. /api/auth/demote/{id})
   static const String demote = '/api/auth/demote';
   
   // USSD
