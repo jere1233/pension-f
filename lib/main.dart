@@ -7,7 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'core/theme/app_theme.dart';
 import 'core/network/api_client.dart';
 import 'core/network/network_info.dart';
-import 'core/utils/logger.dart';
+import 'core/utils/sms_service.dart';
 import 'shared/routes/app_router.dart';
 import 'features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'features/authentication/presentation/providers/auth_provider.dart';
@@ -32,6 +32,10 @@ import 'features/reports/presentation/providers/report_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize SMS Service
+  final smsService = SmsService();
+  await smsService.initialize();
   
   await Hive.initFlutter();
   

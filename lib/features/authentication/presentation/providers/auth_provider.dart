@@ -127,6 +127,7 @@ class AuthProvider extends ChangeNotifier {
 
       await _saveTokens(response);
       _user = response.user.toEntity();
+      await _storeUserData(_user!);
       _status = AuthStatus.authenticated;
       _pendingLoginIdentifier = null;
       _pendingLoginOtp = null;
@@ -229,6 +230,7 @@ class AuthProvider extends ChangeNotifier {
 
       await _saveTokens(response);
       _user = response.user.toEntity();
+      await _storeUserData(_user!);
       _status = AuthStatus.authenticated;
       
       await SecureStorageHelper.delete('pending_registration_tx');
@@ -620,6 +622,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final userModel = await _authDataSource.getCurrentUser();
       _user = userModel.toEntity();
+      await _storeUserData(_user!);
       notifyListeners();
     } catch (e) {
       _errorMessage = e.toString().replaceAll('Exception: ', '');
@@ -712,6 +715,17 @@ class AuthProvider extends ChangeNotifier {
   Future<void> _clearTokens() async {
     await SecureStorageHelper.delete('auth_token');
     await SecureStorageHelper.delete('refresh_token');
+    // Clear user data from shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_id');
+    await prefs.remove('user_phone');
+  }
+
+  /// Store user data in shared preferences
+  Future<void> _storeUserData(User user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_id', user.id);
+    await prefs.setString('user_phone', user.phoneNumber);
   }
 
   /// Set loading state

@@ -76,6 +76,7 @@ class ApiConstants {
   static const String initiatePayment = '/api/payment/initiate';
   static const String checkPaymentStatus = '/api/payment/status';
   static const String paymentCallback = '/api/payment/callback';
+  static const String stkPushByPhone = '/api/payment/stk-push-by-phone';
   
   // ============================================================================
   // TERMS & CONDITIONS

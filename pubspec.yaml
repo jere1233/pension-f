@@ -48,6 +48,7 @@ dependencies:
   equatable: ^2.0.5
   dartz: ^0.10.1
   logger: ^2.0.2+1
+  telephony: ^0.2.0
   uuid: ^4.3.3
   get_it: ^7.6.7
   injectable: ^2.3.2
