@@ -269,28 +269,26 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
           );
         },
       ),
-      // DISABLED: Add Contribution FAB (temporarily hidden)
-      /*
+      // ENABLED: Make Deposit FAB
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           final accountProvider = context.read<AccountProvider>();
           if (accountProvider.defaultAccount != null) {
             context.push(
-              '${RouteNames.addContribution}/${accountProvider.defaultAccount!.id}',
+              '${RouteNames.depositFunds}/${accountProvider.defaultAccount!.id}',
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('No account available for contribution'),
+                content: Text('No account available for deposit'),
               ),
             );
           }
         },
         backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.add),
-        label: const Text('Add Contribution'),
+        icon: const Icon(Icons.account_balance_wallet),
+        label: const Text('Make Deposit'),
       ),
-      */
     );
   }
 

@@ -108,7 +108,7 @@ class _ContributionScreenState extends State<ContributionScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
-          'Add Contribution',
+          'Make Deposit',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,

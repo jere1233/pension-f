@@ -62,7 +62,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
     final accountProvider = context.read<AccountProvider>();
     final result = await accountProvider.depositFunds(
-      accountId: widget.accountId,
       amount: amount,
       phone: phone,
       description: _descriptionController.text.trim().isEmpty
@@ -255,8 +254,8 @@ class _DepositScreenState extends State<DepositScreen> {
                         if (amount == null || amount <= 0) {
                           return 'Please enter a valid amount';
                         }
-                        if (amount < 10) {
-                          return 'Minimum deposit amount is KES 10';
+                        if (amount < 1) {
+                          return 'Minimum deposit amount is KES 1';
                         }
                         return null;
                       },

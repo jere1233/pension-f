@@ -268,10 +268,10 @@ class AccountProvider extends ChangeNotifier {
 
   /// 🆕 Deposit funds (M-Pesa STK Push)
   Future<Map<String, dynamic>?> depositFunds({
-    required int accountId,
     required double amount,
     String? phone,
     String? description,
+    String? planId,
   }) async {
     try {
       _status = AccountStatus.loading;
@@ -279,10 +279,10 @@ class AccountProvider extends ChangeNotifier {
       notifyListeners();
 
       final result = await _accountService.depositFunds(
-        accountId: accountId,
         amount: amount,
         phone: phone,
         description: description,
+        planId: planId,
       );
 
       _status = AccountStatus.loaded;

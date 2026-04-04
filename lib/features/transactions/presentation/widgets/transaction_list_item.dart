@@ -13,57 +13,29 @@ class TransactionListItem extends StatelessWidget {
     required this.onTap,
   });
 
-  IconData _getCategoryIcon(String? category) {
-    if (category == null) return Icons.category;
-    
-    switch (category.toLowerCase()) {
-      case 'food':
-        return Icons.restaurant;
-      case 'transport':
-        return Icons.directions_car;
-      case 'shopping':
-        return Icons.shopping_bag;
-      case 'utilities':
-        return Icons.lightbulb;
-      case 'entertainment':
-        return Icons.movie;
-      case 'salary':
-        return Icons.attach_money;
-      case 'transfer':
-        return Icons.swap_horiz;
-      case 'bill payment':
-        return Icons.receipt;
-      case 'subscription':
-        return Icons.subscriptions;
-      default:
-        return Icons.category;
+  String _getTransactionTypeLabel() {
+    if (transaction.isCredit) {
+      return 'Incoming';
+    } else if (transaction.description == null || transaction.description == '-' || transaction.description!.isEmpty) {
+      return 'Subscription Fee';
+    } else {
+      return 'Contribution';
     }
   }
 
-  Color _getCategoryColor(String? category) {
-    if (category == null) return Colors.grey;
-    
-    switch (category.toLowerCase()) {
-      case 'food':
-        return Colors.orange;
-      case 'transport':
-        return Colors.blue;
-      case 'shopping':
-        return Colors.purple;
-      case 'utilities':
-        return Colors.amber;
-      case 'entertainment':
-        return Colors.pink;
-      case 'salary':
-        return Colors.green;
-      case 'transfer':
-        return Colors.indigo;
-      case 'bill payment':
-        return Colors.red;
-      case 'subscription':
-        return Colors.teal;
-      default:
-        return Colors.grey;
+  Color _getTypeColor() {
+    if (transaction.isCredit) {
+      return AppColors.success;
+    } else {
+      return AppColors.error;
+    }
+  }
+
+  IconData _getTypeIcon() {
+    if (transaction.isCredit) {
+      return Icons.arrow_downward; // Incoming
+    } else {
+      return Icons.arrow_upward; // Outgoing
     }
   }
 
@@ -85,7 +57,8 @@ class TransactionListItem extends StatelessWidget {
     final isCredit = transaction.isCredit;
     final amountColor = isCredit ? AppColors.success : AppColors.error;
     final amountPrefix = isCredit ? '+' : '-';
-    final categoryColor = _getCategoryColor(transaction.category);
+    final typeColor = _getTypeColor();
+    final typeLabel = _getTransactionTypeLabel();
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -101,17 +74,17 @@ class TransactionListItem extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Category Icon
+              // Type Icon
               Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: categoryColor.withOpacity(0.1),
+                  color: typeColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  _getCategoryIcon(transaction.category),
-                  color: categoryColor,
+                  _getTypeIcon(),
+                  color: typeColor,
                   size: 24,
                 ),
               ),
@@ -134,18 +107,21 @@ class TransactionListItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
 
-                    // Recipient/Sender Name or Category
-                    Text(
-                      transaction.recipientName ??
-                          transaction.senderName ??
-                          transaction.category ?? 
-                          'Transaction',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                    // Type Label
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: typeColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      child: Text(
+                        typeLabel,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: typeColor,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 4),
 

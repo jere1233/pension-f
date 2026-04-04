@@ -55,20 +55,36 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print('DEBUG: Transactions API response: $data');
         
         List<dynamic> transactionsList;
         if (data is Map<String, dynamic>) {
-          transactionsList = data['transactions'] ?? data['data'] ?? [];
+          // Try different possible keys for transactions
+          transactionsList = data['transactions'] ?? data['data'] ?? data['results'] ?? [];
+          print('DEBUG: Found ${transactionsList.length} transactions in response map');
+          
+          // If transactionsList is still empty but data has other keys, check if data itself contains transaction-like objects
+          if (transactionsList.isEmpty && data.isNotEmpty) {
+            // Check if the response is wrapped in a success structure like web app
+            if (data['success'] == true && data.containsKey('transactions')) {
+              transactionsList = data['transactions'] ?? [];
+              print('DEBUG: Found transactions in success wrapper: ${transactionsList.length}');
+            }
+          }
         } else if (data is List) {
           transactionsList = data;
+          print('DEBUG: Response is a list with ${transactionsList.length} items');
         } else {
           transactionsList = [];
+          print('DEBUG: Unexpected response format: ${data.runtimeType}');
         }
 
+        print('DEBUG: Final transactions list length: ${transactionsList.length}');
         return transactionsList
             .map((json) => TransactionModel.fromJson(json))
             .toList();
       } else {
+        print('DEBUG: Transactions API failed with status ${response.statusCode}');
         throw Exception('Failed to load transactions');
       }
     } on DioException catch (e) {

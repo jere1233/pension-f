@@ -122,21 +122,23 @@ class AccountService {
   // DEPOSITS (🆕 NEW - M-Pesa Integration)
   // ============================================================================
 
-  /// Deposit funds to account via M-Pesa STK Push
-  /// POST /api/accounts/:id/deposit
+  /// Deposit funds via M-Pesa STK Push (authenticated)
+  /// POST /api/payment/stk-push-by-phone
+  /// Looks up account by phone and initiates payment
   Future<Map<String, dynamic>> depositFunds({
-    required int accountId,
     required double amount,
     String? phone,
     String? description,
+    String? planId,
   }) async {
     try {
       final response = await _apiClient.post(
-        ApiConstants.getAccountDepositUrl(accountId.toString()),
+        ApiConstants.stkPushByPhone,
         data: {
           'amount': amount,
           if (phone != null) 'phone': phone,
           if (description != null) 'description': description,
+          if (planId != null) 'planId': planId,
         },
       );
 
@@ -144,11 +146,10 @@ class AccountService {
         final data = response.data;
         return {
           'success': data['success'] ?? true,
-          'status': data['status'],
           'message': data['message'],
+          'CheckoutRequestID': data['CheckoutRequestID'],
           'transactionId': data['transactionId'],
-          'checkoutRequestId': data['checkoutRequestId'],
-          'statusCheckUrl': data['statusCheckUrl'],
+          'transaction': data['transaction'],
         };
       } else {
         throw Exception(response.data['error'] ?? 'Failed to initiate deposit');

@@ -241,12 +241,11 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                         ),
                         */
                         const SizedBox(width: 12),
-                        // DISABLED: Deposit Funds action (hidden temporarily)
-                        /*
+                        // ENABLED: Make Deposit action
                         Expanded(
                           child: QuickActionButton(
                             icon: Icons.account_balance_wallet,
-                            label: 'Deposit\nFunds',
+                            label: 'Make\nDeposit',
                             color: Colors.blue,
                             onTap: () {
                               context.push(
@@ -255,7 +254,6 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                             },
                           ),
                         ),
-                        */
                         const SizedBox(width: 12),
                         Expanded(
                           child: QuickActionButton(

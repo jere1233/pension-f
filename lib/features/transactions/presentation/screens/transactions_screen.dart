@@ -139,40 +139,51 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               ),
             ),
 
-            // Statistics Summary
+            // Active Filters Display
             Consumer<TransactionProvider>(
               builder: (context, provider, child) {
-                if (provider.status == TransactionStatus.loaded) {
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _StatCard(
-                            title: 'Income',
-                            amount: provider.totalIncome,
-                            color: AppColors.success,
-                            icon: Icons.arrow_downward,
-                          ),
+                final hasFilters = provider.selectedType != null ||
+                    provider.selectedStatus != null ||
+                    provider.startDate != null;
+
+                if (!hasFilters) return const SizedBox.shrink();
+
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      if (provider.selectedType != null)
+                        Chip(
+                          label: Text(provider.selectedType!),
+                          onDeleted: () =>
+                              provider.setTypeFilter(null),
+                          deleteIcon: const Icon(Icons.close, size: 18),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _StatCard(
-                            title: 'Expense',
-                            amount: provider.totalExpense,
-                            color: AppColors.error,
-                            icon: Icons.arrow_upward,
-                          ),
+                      if (provider.selectedStatus != null)
+                        Chip(
+                          label: Text(provider.selectedStatus!),
+                          onDeleted: () =>
+                              provider.setStatusFilter(null),
+                          deleteIcon: const Icon(Icons.close, size: 18),
                         ),
-                      ],
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
+                      if (provider.startDate != null)
+                        Chip(
+                          label: const Text('Date Range'),
+                          onDeleted: () =>
+                              provider.setDateRange(null, null),
+                          deleteIcon: const Icon(Icons.close, size: 18),
+                        ),
+                      TextButton.icon(
+                        icon: const Icon(Icons.clear_all, size: 18),
+                        label: const Text('Clear All'),
+                        onPressed: provider.clearFilters,
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
-
-            // Active Filters Display
             Consumer<TransactionProvider>(
               builder: (context, provider, child) {
                 final hasFilters = provider.selectedType != null ||
@@ -302,60 +313,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final double amount;
-  final Color color;
-  final IconData icon;
-
-  const _StatCard({
-    required this.title,
-    required this.amount,
-    required this.color,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 16),
-              const SizedBox(width: 4),
-              Text(
-                title,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'KES ${amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              color: color,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'core/theme/app_theme.dart';
 import 'core/network/api_client.dart';
 import 'core/network/network_info.dart';
 import 'core/utils/sms_service.dart';
+import 'core/utils/logger.dart';
 import 'shared/routes/app_router.dart';
 import 'features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'features/authentication/presentation/providers/auth_provider.dart';

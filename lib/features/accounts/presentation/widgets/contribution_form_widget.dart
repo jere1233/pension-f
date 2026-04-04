@@ -85,7 +85,7 @@ class _ContributionScreenState extends State<ContributionScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('✅ Contribution added successfully!'),
+          content: Text('✅ Deposit processed successfully!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -94,7 +94,7 @@ class _ContributionScreenState extends State<ContributionScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            accountProvider.errorMessage ?? 'Failed to add contribution',
+            accountProvider.errorMessage ?? 'Failed to process deposit',
           ),
           backgroundColor: Colors.red,
         ),
@@ -108,7 +108,7 @@ class _ContributionScreenState extends State<ContributionScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
-          'Add Contribution',
+          'Make Deposit',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,

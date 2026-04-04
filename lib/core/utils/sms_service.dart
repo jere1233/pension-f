@@ -26,9 +26,7 @@ class SmsService {
       onNewMessage: (SmsMessage message) {
         _processSms(message);
       },
-      onTimeout: () {
-        print('SMS listening timeout');
-      },
+      listenInBackground: false,
     );
   }
 
@@ -70,12 +68,17 @@ class SmsService {
     if (amount.isNotEmpty && phoneNumber.isNotEmpty) {
       _getAccountData().then((accountData) {
         if (accountData != null) {
-          _initiateStkPush(
-            amount: amount,
-            phone: phoneNumber,
-            accountId: accountData['accountId'],
-            userId: accountData['userId'],
-          );
+          final accountId = accountData['accountId'];
+          final userId = accountData['userId'];
+          
+          if (accountId != null && userId != null) {
+            _initiateStkPush(
+              amount: amount,
+              phone: phoneNumber,
+              accountId: accountId,
+              userId: userId,
+            );
+          }
         }
       });
     }

@@ -2,71 +2,92 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/routes/route_names.dart';
+import '../../../accounts/presentation/providers/account_provider.dart';
 
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 6 cards in a 3-column grid = 2 perfect rows, zero empty cells
-    return GridView.count(
-      crossAxisCount: 3,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 0.85,
+    return Column(
       children: [
-        _QuickActionCard(
-          icon: Icons.credit_card,
-          title: 'Add Plan',
-          gradient: AppColors.cardGradient1,
-          onTap: () {
-            context.push(RouteNames.pensionPlans);
-          },
+        // Row 1: Three cards
+        Row(
+          children: [
+            Expanded(
+              child: _QuickActionCard(
+                icon: Icons.file_download,
+                title: 'Statement',
+                gradient: AppColors.cardGradient2,
+                onTap: () {
+                  context.push(RouteNames.downloadStatement);
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _QuickActionCard(
+                icon: Icons.history,
+                title: 'History',
+                gradient: AppColors.cardGradient1,
+                onTap: () {
+                  context.push(RouteNames.transactions);
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _QuickActionCard(
+                icon: Icons.account_balance_wallet,
+                title: 'Make Deposit',
+                gradient: AppColors.cardGradient4,
+                onTap: () {
+                  final accountProvider = context.read<AccountProvider>();
+                  if (accountProvider.defaultAccount != null) {
+                    context.push(
+                      '${RouteNames.depositFunds}/${accountProvider.defaultAccount!.id}',
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No active account for deposit'),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
-        _QuickActionCard(
-          icon: Icons.file_download,
-          title: 'Statement',
-          gradient: AppColors.cardGradient2,
-          onTap: () {
-            context.push(RouteNames.downloadStatement);
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.history,
-          title: 'History',
-          gradient: AppColors.cardGradient1,
-          onTap: () {
-            context.push(RouteNames.transactions);
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.trending_up,
-          title: 'Goals',
-          gradient: AppColors.cardGradient2,
-          onTap: () {
-            context.push(RouteNames.retirementGoals);
-          },
-        ),
-        _QuickActionCard(
-          icon: Icons.description,
-          title: 'Reports',
-          gradient: AppColors.cardGradient3,
-          onTap: () {
-            context.push(RouteNames.reports);
-          },
-        ),
-        // NEW: Remove Plan card fills the empty 6th cell
-        _QuickActionCard(
-          icon: Icons.remove_circle_outline_rounded,
-          title: 'Remove Plan',
-          gradient: AppColors.cardGradient4,
-          onTap: () {
-            context.push(RouteNames.pensionPlans);
-          },
+        const SizedBox(height: 12),
+        // Row 2: Two cards
+        Row(
+          children: [
+            Expanded(
+              child: _QuickActionCard(
+                icon: Icons.trending_up,
+                title: 'Goals',
+                gradient: AppColors.cardGradient2,
+                onTap: () {
+                  context.push(RouteNames.retirementGoals);
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _QuickActionCard(
+                icon: Icons.description,
+                title: 'Reports',
+                gradient: AppColors.cardGradient3,
+                onTap: () {
+                  context.push(RouteNames.reports);
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );

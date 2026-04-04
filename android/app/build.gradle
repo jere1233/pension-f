@@ -23,17 +23,17 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.AutoNest"
-    compileSdk 34 
+    namespace "com.autonest.pension"
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '1.8'
     }
 
     sourceSets {
@@ -41,17 +41,32 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.AutoNest"
-        minSdkVersion 21  
-        targetSdkVersion 34 
+        applicationId "com.autonest.pension"
+        minSdkVersion 23
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'autonest_key'
+            keyPassword 'autonest123'
+            storeFile file('autonest_keystore.jks')
+            storePassword 'autonest123'
+        }
+        debug {
+            keyAlias 'autonest_key'
+            keyPassword 'autonest123'
+            storeFile file('autonest_keystore.jks')
+            storePassword 'autonest123'
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
         }

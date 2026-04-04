@@ -52,8 +52,12 @@ class ApiClient {
         // Add token to headers if available and not an unauth endpoint
         if (!isUnauthEndpoint) {
           final token = await SecureStorageHelper.read('auth_token');
+          print('DEBUG: Auth token for ${options.path}: ${token != null ? 'present' : 'null'}');
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
+            print('DEBUG: Added auth header for ${options.path}');
+          } else {
+            print('DEBUG: No auth token found for ${options.path}');
           }
         }
         return handler.next(options);
