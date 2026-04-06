@@ -4,35 +4,52 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
 import '../network/api_client.dart';
 import '../constants/api_constants.dart';
+import 'permission_service.dart';
 
 class SmsService {
-  final Telephony telephony = Telephony.instance;
-  late ApiClient _apiClient;
-
-  SmsService() {
+  SmsService._internal() {
     _apiClient = ApiClient();
   }
 
+  static final SmsService instance = SmsService._internal();
+
+  final Telephony telephony = Telephony.instance;
+  late ApiClient _apiClient;
+  bool _isListening = false;
+
   Future<void> initialize() async {
-    // Request permissions
-    bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
-    if (permissionsGranted != true) {
-      print('SMS permissions not granted');
+    if (_isListening) {
       return;
     }
 
-    // Listen for incoming SMS
+    // Check SMS permissions using PermissionService
+    final hasPermissions = await PermissionService.checkSmsPermissions();
+    if (!hasPermissions) {
+      // Try to request permissions on first launch
+      final result = await PermissionService.handleSmsPermissionFlow();
+      if (result != PermissionResult.granted) {
+        print('SMS permissions not granted on initialization - will request when needed');
+        return;
+      }
+    }
+
+    // Start SMS listening if permissions granted
     telephony.listenIncomingSms(
       onNewMessage: (SmsMessage message) {
         _processSms(message);
       },
       listenInBackground: false,
     );
+
+    _isListening = true;
+    print('SMS service initialized successfully');
   }
 
   void _processSms(SmsMessage message) {
     // Check if from M-Pesa
-    if (message.address == 'MPESA' || message.address == 'M-PESA' || message.address?.contains('MPESA') == true) {
+    if (message.address == 'MPESA' ||
+        message.address == 'M-PESA' ||
+        message.address?.contains('MPESA') == true) {
       _parseMpesaSms(message.body ?? '');
     }
   }
@@ -70,7 +87,7 @@ class SmsService {
         if (accountData != null) {
           final accountId = accountData['accountId'];
           final userId = accountData['userId'];
-          
+
           if (accountId != null && userId != null) {
             _initiateStkPush(
               amount: amount,
@@ -89,7 +106,7 @@ class SmsService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? userId = prefs.getString('user_id');
       String? accountId = prefs.getString('account_id');
-      
+
       if (userId != null && accountId != null) {
         return {
           'userId': userId,
@@ -128,22 +145,22 @@ class SmsService {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        final transactionId =
-            data['transaction']?['id'] ??
+        final transactionId = data['transaction']?['id'] ??
             data['transactionId'] ??
             data['transaction']?['_id'] ??
             data['transaction']?['transactionId'] ??
             'N/A';
-        
+
         Fluttertoast.showToast(
           msg: '✅ STK Push sent! TransactionID: $transactionId',
           toastLength: Toast.LENGTH_LONG,
         );
-        
+
         print('STK Push initiated successfully - TxnID: $transactionId');
       } else {
         Fluttertoast.showToast(
-          msg: '❌ Failed to initiate STK Push: ${response.data['error'] ?? 'Unknown error'}',
+          msg:
+              '❌ Failed to initiate STK Push: ${response.data['error'] ?? 'Unknown error'}',
           toastLength: Toast.LENGTH_LONG,
         );
         print('STK Push failed: ${response.data}');
@@ -151,9 +168,11 @@ class SmsService {
     } on DioException catch (e) {
       String errorMsg = 'Network error';
       if (e.response != null) {
-        errorMsg = e.response?.data['error'] ?? e.message ?? 'Failed to initiate STK Push';
+        errorMsg = e.response?.data['error'] ??
+            e.message ??
+            'Failed to initiate STK Push';
       }
-      
+
       Fluttertoast.showToast(
         msg: '❌ Error: $errorMsg',
         toastLength: Toast.LENGTH_LONG,

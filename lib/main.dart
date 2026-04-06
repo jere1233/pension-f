@@ -20,7 +20,7 @@ import 'features/transactions/data/repositories/transaction_repository_impl.dart
 import 'features/transactions/domain/usecases/get_all_transactions_usecase.dart';
 import 'features/transactions/domain/usecases/get_transaction_detail_usecase.dart';
 import 'features/transactions/presentation/providers/transaction_provider.dart';
-import 'features/accounts/data/services/account_service.dart'; 
+import 'features/accounts/data/services/account_service.dart';
 import 'features/accounts/presentation/providers/account_provider.dart';
 import 'features/reports/data/datasources/report_remote_datasource.dart';
 import 'features/reports/data/repositories/report_repository_impl.dart';
@@ -33,21 +33,20 @@ import 'features/reports/presentation/providers/report_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize SMS Service
-  final smsService = SmsService();
-  await smsService.initialize();
-  
+  await SmsService.instance.initialize();
+
   await Hive.initFlutter();
-  
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  
+
   // Set system UI to edge-to-edge with transparent bars
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  
+
   // Configure system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -58,7 +57,7 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  
+
   runApp(const AutoNest());
 }
 
@@ -69,16 +68,16 @@ class AutoNest extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize dependencies
     final apiClient = ApiClient();
-    final logger = Logger();
+    final logger = const Logger();
     final networkInfo = NetworkInfoImpl(Connectivity());
-    
+
     // Initialize data sources
     final authDataSource = AuthRemoteDataSource(apiClient: apiClient);
     final dashboardDataSource = DashboardRemoteDataSourceImpl(
       dio: apiClient.dio,
       logger: logger,
     );
-    
+
     final reportDataSource = ReportRemoteDataSourceImpl(
       dio: apiClient.dio,
       logger: logger,
@@ -93,7 +92,7 @@ class AutoNest extends StatelessWidget {
             dio: apiClient.dio,
           )..checkAuthStatus(),
         ),
-        
+
         // Dashboard Provider
         ChangeNotifierProvider(
           create: (_) => DashboardProvider(
@@ -104,12 +103,14 @@ class AutoNest extends StatelessWidget {
             ),
           ),
         ),
-        
+
         // Transactions Provider
         ChangeNotifierProvider(
           create: (_) {
-            final transactionRemote = TransactionRemoteDataSourceImpl(dio: apiClient.dio);
-            final transactionRepo = TransactionRepositoryImpl(remoteDataSource: transactionRemote);
+            final transactionRemote =
+                TransactionRemoteDataSourceImpl(dio: apiClient.dio);
+            final transactionRepo =
+                TransactionRepositoryImpl(remoteDataSource: transactionRemote);
             final getAll = GetAllTransactionsUseCase(transactionRepo);
             final getDetail = GetTransactionDetailUseCase(transactionRepo);
             return TransactionProvider(
@@ -118,14 +119,14 @@ class AutoNest extends StatelessWidget {
             );
           },
         ),
-        
+
         // Account Provider
         ChangeNotifierProvider(
           create: (_) => AccountProvider(
             accountService: AccountService(),
           ),
         ),
-        
+
         // Reports Provider
         ChangeNotifierProvider(
           create: (_) {
@@ -133,10 +134,12 @@ class AutoNest extends StatelessWidget {
               remoteDataSource: reportDataSource,
               logger: logger,
             );
-            
+
             return ReportProvider(
-              generateTransactionReportUseCase: GenerateTransactionReport(reportRepository),
-              generateCustomerReportUseCase: GenerateCustomerReport(reportRepository),
+              generateTransactionReportUseCase:
+                  GenerateTransactionReport(reportRepository),
+              generateCustomerReportUseCase:
+                  GenerateCustomerReport(reportRepository),
               getReportsUseCase: GetReports(reportRepository),
               getReportByIdUseCase: GetReportById(reportRepository),
               deleteReportUseCase: DeleteReport(reportRepository),

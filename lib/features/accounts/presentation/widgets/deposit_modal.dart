@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../shared/widgets/sms_permission_dialog.dart';
+import '../../../../core/utils/permission_service.dart';
 import '../providers/account_provider.dart';
 
 class DepositModal extends StatefulWidget {
@@ -44,7 +46,8 @@ class _DepositModalState extends State<DepositModal> {
                 DropdownMenuItem(value: 'premium', child: Text('Premium Plan')),
               ],
               onChanged: (v) => setState(() => _selectedPlanId = v),
-              decoration: const InputDecoration(labelText: 'Pension Plan (Optional)'),
+              decoration:
+                  const InputDecoration(labelText: 'Pension Plan (Optional)'),
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -62,24 +65,30 @@ class _DepositModalState extends State<DepositModal> {
             TextFormField(
               controller: _phoneCtrl,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Phone (e.g. +2547...)'),
+              decoration:
+                  const InputDecoration(labelText: 'Phone (e.g. +2547...)'),
               validator: (v) => (v == null || v.isEmpty) ? 'Enter phone' : null,
             ),
           ],
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+        TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel')),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-          onPressed: _isSubmitting ? null : () => _handleDeposit(accountProvider),
-          child: _isSubmitting 
-            ? const SizedBox(
-              height: 16,
-              width: 16,
-              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)),
-            )
-            : const Text('Deposit'),
+          onPressed:
+              _isSubmitting ? null : () => _handleDeposit(accountProvider),
+          child: _isSubmitting
+              ? const SizedBox(
+                  height: 16,
+                  width: 16,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(Colors.white)),
+                )
+              : const Text('Deposit'),
         ),
       ],
     );
@@ -87,16 +96,38 @@ class _DepositModalState extends State<DepositModal> {
 
   Future<void> _handleDeposit(AccountProvider accountProvider) async {
     if (!_formKey.currentState!.validate()) return;
-    
+
+    // Check SMS permissions before proceeding
+    final hasPermissions = await PermissionService.checkSmsPermissions();
+    if (!hasPermissions) {
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => SmsPermissionDialog(
+          onPermissionGranted: () => _proceedWithDeposit(accountProvider),
+          onPermissionDenied: () => _proceedWithDeposit(
+              accountProvider), // Allow deposit even without permissions
+        ),
+      );
+      return;
+    }
+
+    // Permissions granted, proceed directly
+    _proceedWithDeposit(accountProvider);
+  }
+
+  Future<void> _proceedWithDeposit(AccountProvider accountProvider) async {
     setState(() => _isSubmitting = true);
-    
+
     final amount = double.parse(_amountCtrl.text);
     final phone = _phoneCtrl.text;
-    
+
     // Build description matching web version: "Contribution to [planId]"
-    final description = _selectedPlanId != null 
-      ? 'Contribution to $_selectedPlanId' 
-      : 'Pension contribution';
+    final description = _selectedPlanId != null
+        ? 'Contribution to $_selectedPlanId'
+        : 'Pension contribution';
 
     final result = await accountProvider.depositFunds(
       amount: amount,
@@ -111,11 +142,15 @@ class _DepositModalState extends State<DepositModal> {
 
     if (result != null && result['success'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Payment request sent. Please enter your M-Pesa PIN.')),
+        const SnackBar(
+            content:
+                Text('✅ Payment request sent. Please enter your M-Pesa PIN.')),
       );
       Navigator.of(context).pop();
     } else {
-      final msg = result?['message'] ?? accountProvider.errorMessage ?? 'Failed to initiate deposit';
+      final msg = result?['message'] ??
+          accountProvider.errorMessage ??
+          'Failed to initiate deposit';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('❌ $msg')),
       );

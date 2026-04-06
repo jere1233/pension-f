@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/routes/route_names.dart';
+import '../../../../shared/widgets/sms_permission_dialog.dart';
+import '../../../../core/utils/permission_service.dart';
 import '../providers/account_provider.dart';
 
 class DepositScreen extends StatefulWidget {
@@ -48,6 +50,28 @@ class _DepositScreenState extends State<DepositScreen> {
       return;
     }
 
+    // Check SMS permissions before proceeding
+    final hasPermissions = await PermissionService.checkSmsPermissions();
+    if (!hasPermissions) {
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => SmsPermissionDialog(
+          onPermissionGranted: _proceedWithDeposit,
+          onPermissionDenied:
+              _proceedWithDeposit, // Allow deposit even without permissions
+        ),
+      );
+      return;
+    }
+
+    // Permissions granted, proceed directly
+    _proceedWithDeposit();
+  }
+
+  Future<void> _proceedWithDeposit() async {
     final amount = double.parse(_amountController.text);
     String phone = _phoneController.text.trim();
 
@@ -226,15 +250,17 @@ class _DepositScreenState extends State<DepositScreen> {
                     Text(
                       'Deposit Amount',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+\.?\d{0,2}')),
                       ],
                       decoration: InputDecoration(
                         hintText: 'Enter amount to deposit',
@@ -267,8 +293,8 @@ class _DepositScreenState extends State<DepositScreen> {
                     Text(
                       'M-Pesa Phone Number',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -293,16 +319,17 @@ class _DepositScreenState extends State<DepositScreen> {
                         }
                         // Remove any non-digit characters
                         final digits = value.replaceAll(RegExp(r'\D'), '');
-                        
+
                         // Check for valid Kenyan phone number
                         if (digits.length == 10 && digits.startsWith('0')) {
                           return null; // Valid: 07XXXXXXXX
-                        } else if (digits.length == 12 && digits.startsWith('254')) {
+                        } else if (digits.length == 12 &&
+                            digits.startsWith('254')) {
                           return null; // Valid: 254XXXXXXXXX
                         } else if (digits.length == 9) {
                           return null; // Valid: 7XXXXXXXX
                         }
-                        
+
                         return 'Please enter a valid phone number';
                       },
                     ),
@@ -313,8 +340,8 @@ class _DepositScreenState extends State<DepositScreen> {
                     Text(
                       'Description (Optional)',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -399,13 +426,17 @@ class _DepositScreenState extends State<DepositScreen> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          _buildInstructionStep('1', 'Enter deposit amount and phone number'),
+                          _buildInstructionStep(
+                              '1', 'Enter deposit amount and phone number'),
                           const SizedBox(height: 8),
-                          _buildInstructionStep('2', 'Click "Send STK Push" button'),
+                          _buildInstructionStep(
+                              '2', 'Click "Send STK Push" button'),
                           const SizedBox(height: 8),
-                          _buildInstructionStep('3', 'Enter M-Pesa PIN on your phone'),
+                          _buildInstructionStep(
+                              '3', 'Enter M-Pesa PIN on your phone'),
                           const SizedBox(height: 8),
-                          _buildInstructionStep('4', 'Deposit will reflect immediately'),
+                          _buildInstructionStep(
+                              '4', 'Deposit will reflect immediately'),
                         ],
                       ),
                     ),
