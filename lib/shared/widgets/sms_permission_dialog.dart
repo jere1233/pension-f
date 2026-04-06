@@ -22,29 +22,14 @@ class _SmsPermissionDialogState extends State<SmsPermissionDialog> {
   bool _isOpeningSettings = false;
 
   Future<void> _requestPermissions() async {
-    setState(() => _isRequesting = true);
-
-    final result = await PermissionService.handleSmsPermissionFlow();
-
+    // SMS permissions disabled by design for Google Play compliance
+    // Users will use manual entry instead
     setState(() => _isRequesting = false);
 
     if (!mounted) return;
-
-    switch (result) {
-      case PermissionResult.granted:
-        await SmsService.instance.initialize();
-        if (!mounted) return;
-        Navigator.of(context).pop();
-        widget.onPermissionGranted();
-        break;
-      case PermissionResult.denied:
-        // Show dialog again with option to try again or open settings
-        _showRetryDialog();
-        break;
-      case PermissionResult.permanentlyDenied:
-        _showSettingsDialog();
-        break;
-    }
+    await SmsService.instance.initialize();
+    Navigator.of(context).pop();
+    widget.onPermissionGranted(); // Continue with manual mode
   }
 
   void _showRetryDialog() {
@@ -119,6 +104,29 @@ class _SmsPermissionDialogState extends State<SmsPermissionDialog> {
     );
   }
 
+  void _showRestrictedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('SMS Permission Restricted'),
+        content: const Text(
+          'SMS access is restricted by Google Play or your device. The app will work without automatic M-Pesa detection. You can manually enter transaction details instead.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              widget.onPermissionDenied?.call();
+            },
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _openSettings() async {
     setState(() => _isOpeningSettings = true);
 
@@ -167,41 +175,28 @@ class _SmsPermissionDialogState extends State<SmsPermissionDialog> {
       title: const Row(
         children: [
           Icon(
-            Icons.sms,
+            Icons.info,
             color: AppColors.primary,
             size: 28,
           ),
           SizedBox(width: 12),
-          Text('SMS Access Required'),
+          Text('Manual Entry Mode'),
         ],
       ),
       content: const Text(
-        'We need SMS access to automatically detect your M-Pesa transaction confirmations and update your account balance instantly.',
+        'Due to Google Play requirements, automatic SMS detection is not available. You can manually enter your M-Pesa transaction amounts and we\'ll process them instantly.',
         style: TextStyle(fontSize: 16),
       ),
       actions: [
-        TextButton(
+        ElevatedButton(
           onPressed: () {
             Navigator.of(context).pop();
-            widget.onPermissionDenied?.call();
+            widget.onPermissionGranted(); // Continue with manual mode
           },
-          child: const Text('Skip'),
-        ),
-        ElevatedButton(
-          onPressed: _isRequesting ? null : _requestPermissions,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
           ),
-          child: _isRequesting
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              : const Text('Allow Access'),
+          child: const Text('Continue'),
         ),
       ],
     );

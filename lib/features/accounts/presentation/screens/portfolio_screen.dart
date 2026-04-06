@@ -198,7 +198,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         Expanded(
                           child: AccountStatsCard(
                             title: 'Total Earnings',
-                            value: 'KES ${(totalEarnings / 1000).toStringAsFixed(0)}K',
+                            value: 'KES ${totalEarnings.toStringAsFixed(0)}',
                             icon: Icons.monetization_on,
                             color: Colors.orange,
                             subtitle: 'Investment returns',
@@ -217,7 +217,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                         Expanded(
                           child: AccountStatsCard(
                             title: 'Contributions',
-                            value: 'KES ${(accountProvider.totalContributions / 1000).toStringAsFixed(0)}K',
+                            value: 'KES ${accountProvider.totalContributions.toStringAsFixed(0)}',
                             icon: Icons.add_circle,
                             color: Colors.blue,
                             subtitle: 'Total invested',

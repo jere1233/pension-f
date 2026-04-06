@@ -18,31 +18,11 @@ class SmsService {
   bool _isListening = false;
 
   Future<void> initialize() async {
-    if (_isListening) {
-      return;
-    }
-
-    // Check SMS permissions using PermissionService
-    final hasPermissions = await PermissionService.checkSmsPermissions();
-    if (!hasPermissions) {
-      // Try to request permissions on first launch
-      final result = await PermissionService.handleSmsPermissionFlow();
-      if (result != PermissionResult.granted) {
-        print('SMS permissions not granted on initialization - will request when needed');
-        return;
-      }
-    }
-
-    // Start SMS listening if permissions granted
-    telephony.listenIncomingSms(
-      onNewMessage: (SmsMessage message) {
-        _processSms(message);
-      },
-      listenInBackground: false,
-    );
-
-    _isListening = true;
-    print('SMS service initialized successfully');
+    // Google Play restricts direct SMS access for non-SMS handler apps
+    // SMS permissions (READ_SMS, RECEIVE_SMS) are not declared
+    // Users will manually enter transaction details instead
+    print('SMS Service initialized - manual transaction entry mode (Google Play compliant)');
+    _isListening = false;
   }
 
   void _processSms(SmsMessage message) {

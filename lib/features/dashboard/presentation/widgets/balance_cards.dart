@@ -23,12 +23,24 @@ class BalanceCards extends StatelessWidget {
     return (account.employeeContributions + account.employerContributions).toInt();
   }
 
-  int _calculateYearsToRetirement() {
-    return 35;
+  int _calculateYearsToRetirement(User? user) {
+    final targetAge = user?.retirementAge ?? 60;
+
+    if (user?.dateOfBirth != null) {
+      final birthDate = user!.dateOfBirth!;
+      final now = DateTime.now();
+      int age = now.year - birthDate.year;
+      if (now.month < birthDate.month ||
+          (now.month == birthDate.month && now.day < birthDate.day)) {
+        age--;
+      }
+      return (targetAge - age).clamp(0, 100);
+    }
+
+    return 0;
   }
 
-  int _calculateProjectedRetirement(double currentBalance) {
-    final years = _calculateYearsToRetirement();
+  int _calculateProjectedRetirement(double currentBalance, int years) {
     const dailySavings = 100.0;
     const daysPerYear = 365;
     final projectedSavings = dailySavings * daysPerYear * years;
@@ -37,11 +49,6 @@ class BalanceCards extends StatelessWidget {
   }
 
   String _formatAmount(double amount) {
-    if (amount >= 1000000) {
-      return '${(amount / 1000000).toStringAsFixed(1)}M';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K';
-    }
     return amount.toStringAsFixed(0);
   }
 
@@ -58,19 +65,27 @@ class BalanceCards extends StatelessWidget {
 
     for (final acc in accountProvider.accounts) {
       if (!acc.isActive) continue;
-      totalBalance += acc.currentBalance;
+      totalBalance += acc.availableBalance; // Use availableBalance to match web app
       totalAvailableBalance += acc.availableBalance;
       totalLockedBalance += acc.lockedBalance;
       totalInterest += acc.getTotalInterestEarned();
     }
 
-    final projectedAt60 = _calculateProjectedRetirement(totalBalance);
+    // Prefer stats.balance if it's positive, otherwise use calculated totalBalance from accounts
+    final totalBalanceValue = (stats?.balance ?? 0) > 0 ? stats!.balance : totalBalance;
+    final retirementYears = _calculateYearsToRetirement(user);
+    final projectedAt60 = retirementYears > 0
+        ? _calculateProjectedRetirement(totalBalanceValue, retirementYears)
+        : totalBalanceValue.toInt();
+    final projectedSubtitle = retirementYears > 0
+        ? 'For KES 100 daily savings'
+        : 'Complete profile to project retirement';
 
     final cards = [
       _BalanceCard(
         title: 'Total Balance',
-        amount: 'KES ${_formatAmount(totalBalance)}',
-        subtitle: totalBalance > 0
+        amount: 'KES ${_formatAmount(totalBalanceValue)}',
+        subtitle: totalBalanceValue > 0
             ? 'Available: KES ${_formatAmount(totalAvailableBalance)}\nLocked: KES ${_formatAmount(totalLockedBalance)}'
             : 'No balance',
         gradient: AppColors.cardGradient1,
@@ -88,7 +103,7 @@ class BalanceCards extends StatelessWidget {
       _BalanceCard(
         title: 'Projected @ 60',
         amount: 'KES ${_formatAmount(projectedAt60.toDouble())}',
-        subtitle: 'Based on current balance',
+        subtitle: projectedSubtitle,
         gradient: AppColors.cardGradient3,
         icon: Icons.savings,
       ),

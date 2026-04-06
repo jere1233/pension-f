@@ -12,6 +12,7 @@ class User extends Equatable {
   final double? balance;
   final bool? isVerified;
   final DateTime? createdAt;
+  final DateTime? dateOfBirth;
   final BankAccount? bankAccount; 
   final String? occupation;
   final String? employer;
@@ -30,6 +31,7 @@ class User extends Equatable {
     this.balance,
     this.isVerified,
     this.createdAt,
+    this.dateOfBirth,
     this.bankAccount, // 🆕 NEW FIELD
     this.occupation,
     this.employer,
@@ -52,6 +54,7 @@ class User extends Equatable {
         balance,
         isVerified,
         createdAt,
+        dateOfBirth,
         bankAccount,
         occupation,
         employer,
@@ -71,6 +74,7 @@ class User extends Equatable {
     double? balance,
     bool? isVerified,
     DateTime? createdAt,
+    DateTime? dateOfBirth,
     BankAccount? bankAccount,
     String? occupation,
     String? employer,
@@ -89,6 +93,7 @@ class User extends Equatable {
       balance: balance ?? this.balance,
       isVerified: isVerified ?? this.isVerified,
       createdAt: createdAt ?? this.createdAt,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       bankAccount: bankAccount ?? this.bankAccount,
       occupation: occupation ?? this.occupation,
       employer: employer ?? this.employer,

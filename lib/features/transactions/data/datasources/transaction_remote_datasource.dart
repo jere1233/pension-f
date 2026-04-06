@@ -56,30 +56,10 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       if (response.statusCode == 200) {
         final data = response.data;
         print('DEBUG: Transactions API response: $data');
-        
-        List<dynamic> transactionsList;
-        if (data is Map<String, dynamic>) {
-          // Try different possible keys for transactions
-          transactionsList = data['transactions'] ?? data['data'] ?? data['results'] ?? [];
-          print('DEBUG: Found ${transactionsList.length} transactions in response map');
-          
-          // If transactionsList is still empty but data has other keys, check if data itself contains transaction-like objects
-          if (transactionsList.isEmpty && data.isNotEmpty) {
-            // Check if the response is wrapped in a success structure like web app
-            if (data['success'] == true && data.containsKey('transactions')) {
-              transactionsList = data['transactions'] ?? [];
-              print('DEBUG: Found transactions in success wrapper: ${transactionsList.length}');
-            }
-          }
-        } else if (data is List) {
-          transactionsList = data;
-          print('DEBUG: Response is a list with ${transactionsList.length} items');
-        } else {
-          transactionsList = [];
-          print('DEBUG: Unexpected response format: ${data.runtimeType}');
-        }
 
+        final transactionsList = _extractTransactionsList(data);
         print('DEBUG: Final transactions list length: ${transactionsList.length}');
+
         return transactionsList
             .map((json) => TransactionModel.fromJson(json))
             .toList();
@@ -138,17 +118,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        final data = response.data;
-        
-        List<dynamic> transactionsList;
-        if (data is Map<String, dynamic>) {
-          transactionsList = data['transactions'] ?? data['data'] ?? [];
-        } else if (data is List) {
-          transactionsList = data;
-        } else {
-          transactionsList = [];
-        }
-
+        final transactionsList = _extractTransactionsList(response.data);
         return transactionsList
             .map((json) => TransactionModel.fromJson(json))
             .toList();
@@ -178,17 +148,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        final data = response.data;
-        
-        List<dynamic> transactionsList;
-        if (data is Map<String, dynamic>) {
-          transactionsList = data['transactions'] ?? data['data'] ?? [];
-        } else if (data is List) {
-          transactionsList = data;
-        } else {
-          transactionsList = [];
-        }
-
+        final transactionsList = _extractTransactionsList(response.data);
         return transactionsList
             .map((json) => TransactionModel.fromJson(json))
             .toList();
@@ -205,5 +165,37 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
     } catch (e) {
       throw Exception('Failed to load transactions by category: $e');
     }
+  }
+
+  List<dynamic> _extractTransactionsList(dynamic data) {
+    if (data is List) {
+      return data;
+    }
+
+    if (data is Map<String, dynamic>) {
+      if (data['transactions'] is List) {
+        return data['transactions'];
+      }
+
+      if (data['data'] is List) {
+        return data['data'];
+      }
+
+      if (data['results'] is List) {
+        return data['results'];
+      }
+
+      if (data['data'] is Map<String, dynamic>) {
+        final nested = data['data'] as Map<String, dynamic>;
+        if (nested['transactions'] is List) {
+          return nested['transactions'];
+        }
+        if (nested['results'] is List) {
+          return nested['results'];
+        }
+      }
+    }
+
+    return [];
   }
 }

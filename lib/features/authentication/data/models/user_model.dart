@@ -55,6 +55,7 @@ class UserModel extends User {
     super.balance,
     super.isVerified,
     super.createdAt,
+    super.dateOfBirth,
     super.bankAccount, 
     super.occupation,
     super.employer,
@@ -111,6 +112,9 @@ class UserModel extends User {
       createdAt: json['created_at'] != null 
           ? DateTime.tryParse(json['created_at'].toString()) 
           : (json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null),
+      dateOfBirth: json['dateOfBirth'] != null
+          ? DateTime.tryParse(json['dateOfBirth'].toString())
+          : (json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null),
       bankAccount: bankAccount, // 🆕 NEW FIELD
       occupation: json['occupation']?.toString(),
       employer: json['employer']?.toString(),
@@ -137,7 +141,8 @@ class UserModel extends User {
       if (employer != null) 'employer': employer,
       if (salary != null) 'salary': salary,
       if (contributionRate != null) 'contributionRate': contributionRate,
-      if (retirementAge != null) 'retirementAge': retirementAge,
+if (dateOfBirth != null) 'dateOfBirth': dateOfBirth?.toIso8601String(),
+        if (retirementAge != null) 'retirementAge': retirementAge,
     };
   }
 
@@ -152,6 +157,7 @@ class UserModel extends User {
         balance: balance,
         isVerified: isVerified,
         createdAt: createdAt,
+        dateOfBirth: dateOfBirth,
         bankAccount: bankAccount,
         occupation: occupation,
         employer: employer,
@@ -171,6 +177,7 @@ class UserModel extends User {
         balance: user.balance,
         isVerified: user.isVerified,
         createdAt: user.createdAt,
+        dateOfBirth: user.dateOfBirth,
         bankAccount: user.bankAccount,
         occupation: user.occupation,
         employer: user.employer,

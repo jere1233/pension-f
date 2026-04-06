@@ -206,7 +206,7 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
                             const SizedBox(width: 12),
                             _buildStatChip(
                               'Contributions',
-                              'KES ${(accountProvider.totalContributions / 1000).toStringAsFixed(0)}K',
+                              'KES ${accountProvider.totalContributions.toStringAsFixed(0)}',
                             ),
                           ],
                         ),

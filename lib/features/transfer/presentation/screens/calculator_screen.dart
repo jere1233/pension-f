@@ -68,11 +68,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   String _formatCurrency(double amount) {
-    if (amount >= 1000000) {
-      return 'KES ${(amount / 1000000).toStringAsFixed(1)}M';
-    } else if (amount >= 1000) {
-      return 'KES ${(amount / 1000).toStringAsFixed(1)}K';
-    }
     return 'KES ${amount.toStringAsFixed(0)}';
   }
 

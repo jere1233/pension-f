@@ -214,7 +214,7 @@ class AccountCard extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            '$label: ${(amount / 1000).toStringAsFixed(0)}K',
+            '$label: KES ${amount.toStringAsFixed(0)}',
             style: TextStyle(
               color: color,
               fontSize: 10,

@@ -1,5 +1,5 @@
 name: autonest
-description: A modern banking application for seamless financial transactions
+description: A modern banking application for seamless M-Pesa transactions with automatic SMS processing
 publish_to: 'none'
 version: 1.0.0+1
 

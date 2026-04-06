@@ -23,7 +23,27 @@ class AccountService {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        final accountsData = data['accounts'] as List;
+        
+        // Handle different response structures
+        List<dynamic> accountsData;
+        
+        if (data is List) {
+          // Direct array response
+          accountsData = data;
+        } else if (data is Map<String, dynamic>) {
+          if (data['accounts'] is List) {
+            accountsData = data['accounts'];
+          } else if (data['data'] is List) {
+            accountsData = data['data'];
+          } else if (data['results'] is List) {
+            accountsData = data['results'];
+          } else {
+            throw Exception('Unexpected response structure: ${data.keys}');
+          }
+        } else {
+          throw Exception('Invalid response format');
+        }
+        
         return accountsData.map((json) => AccountModel.fromJson(json)).toList();
       } else {
         throw Exception(response.data['error'] ?? 'Failed to fetch accounts');

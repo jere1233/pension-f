@@ -14,12 +14,13 @@ class EmploymentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // These fields would need to be added to your User entity
-    final employer = 'N/A'; // user?.employer
-    final occupation = 'N/A'; // user?.occupation
-    final salary = 85000; // user?.salary
-    final contributionRate = '10%'; // user?.contributionRate
-    final retirementAge = 65; // user?.retirementAge
+    final employer = user?.employer ?? 'N/A';
+    final occupation = user?.occupation ?? 'N/A';
+    final salary = user?.salary ?? 0;
+    final contributionRate = user?.contributionRate != null
+        ? '${user!.contributionRate!.toStringAsFixed(1)}%'
+        : 'N/A';
+    final retirementAge = user?.retirementAge ?? 60;
 
     return Container(
       padding: const EdgeInsets.all(20),

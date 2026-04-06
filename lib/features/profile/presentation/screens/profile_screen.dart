@@ -209,7 +209,7 @@ class ProfileScreen extends StatelessWidget {
                     title: 'Privacy & Security',
                     iconColor: AppColors.info,
                     onTap: () {
-                      // TODO: Navigate to privacy settings
+                      _showPrivacyPolicyDialog(context);
                     },
                   ),
                   _buildDivider(),
@@ -499,6 +499,124 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _showPrivacyPolicyDialog(context);
+            },
+            child: const Text('Privacy Policy'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacyPolicyDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                gradient: AppColors.cardGradient1,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.privacy_tip_outlined,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text('Privacy Policy'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'AutoNest Privacy Policy',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Last Updated: April 6, 2026',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'SMS Permissions',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'AutoNest requires SMS permissions to automatically process M-Pesa transactions. We only read SMS messages from M-Pesa.',
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'What we access:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                '• M-Pesa transaction SMS messages only\n• Transaction amounts and recipient phone numbers\n• We do NOT read personal messages or emails',
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Why we need this:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                '• To automatically detect successful M-Pesa transactions\n• To trigger deposit confirmations without manual input\n• To provide seamless banking experience',
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Data Security',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '• All data is encrypted in transit and at rest\n• SMS content is processed locally and not stored permanently\n• We follow industry-standard security practices',
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
